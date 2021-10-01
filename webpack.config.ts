@@ -261,7 +261,7 @@ let appConfig: Configuration = {
         use: {
           loader: 'po-catalog-loader',
           options: {
-            referenceExtensions: ['.js', '.jsx'],
+            referenceExtensions: ['.js', '.jsx', '.tsx'],
             domain: 'sentry',
           },
         },
