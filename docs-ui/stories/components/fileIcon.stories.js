@@ -1,7 +1,7 @@
 import FileIcon from 'sentry/components/fileIcon';
 
 export default {
-  title: 'Assets/Icons/File Icon',
+  title: 'Components/File Icon',
   component: FileIcon,
   args: {
     fileName: 'src/components/testComponent.tsx',
