@@ -8,9 +8,11 @@ from snuba_sdk.legacy import json_to_snql
 
 from sentry.eventstore import Filter
 from sentry.models import Any, Environment, Mapping, Optional
+from sentry.snuba.dataset import EntityKey
 from sentry.snuba.entity_subscription import (
     BaseEntitySubscription,
-    map_aggregate_to_entity_subscription,
+    get_entity_subscription_for_dataset,
+    map_aggregate_to_entity_key,
 )
 from sentry.snuba.models import QueryDatasets, QuerySubscription
 from sentry.tasks.base import instrumented_task
@@ -120,7 +122,9 @@ def delete_subscription_from_snuba(query_subscription_id, **kwargs):
 
     if subscription.subscription_id is not None:
         _delete_from_snuba(
-            QueryDatasets(subscription.snuba_query.dataset), subscription.subscription_id
+            QueryDatasets(subscription.snuba_query.dataset),
+            subscription.subscription_id,
+            subscription.snuba_query.aggregate,
         )
 
     if subscription.status == QuerySubscription.Status.DELETING.value:
@@ -140,7 +144,7 @@ def build_snuba_filter(
 
 def _create_in_snuba(subscription: QuerySubscription) -> str:
     snuba_query = subscription.snuba_query
-    entity_subscription = map_aggregate_to_entity_subscription(
+    entity_subscription = get_entity_subscription_for_dataset(
         dataset=QueryDatasets(snuba_query.dataset),
         aggregate=snuba_query.aggregate,
         extra_fields={
@@ -190,8 +194,11 @@ def _create_in_snuba(subscription: QuerySubscription) -> str:
     return json.loads(response.data)["subscription_id"]
 
 
-def _delete_from_snuba(dataset: QueryDatasets, subscription_id: str) -> None:
-    response = _snuba_pool.urlopen("DELETE", f"/{dataset.value}/subscriptions/{subscription_id}")
+def _delete_from_snuba(dataset: QueryDatasets, subscription_id: str, aggregate: str) -> None:
+    entity_key: EntityKey = map_aggregate_to_entity_key(dataset, aggregate)
+    response = _snuba_pool.urlopen(
+        "DELETE", f"/{dataset.value}/{entity_key.value}/subscriptions/{subscription_id}"
+    )
     if response.status != 202:
         raise SnubaError("HTTP %s response from Snuba!" % response.status)
 
