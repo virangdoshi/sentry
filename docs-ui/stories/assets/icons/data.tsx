@@ -8,7 +8,6 @@ type IconGroupName =
   | 'layout'
   | 'media'
   | 'device'
-  | 'keyboard'
   | 'other'
   | 'logo';
 
@@ -131,10 +130,6 @@ export const iconGroups: IconGroup[] = [
     label: 'Device',
   },
   {
-    id: 'keyboard',
-    label: 'Keyboard',
-  },
-  {
     id: 'other',
     label: 'Other',
   },
@@ -193,18 +188,7 @@ export const icons: IconData[] = [
   {id: 'menu', groups: ['layout'], keywords: ['navigate']},
   {id: 'list', groups: ['layout'], keywords: ['item']},
   {id: 'activity', groups: ['layout', 'issue'], keywords: ['list']},
-  {id: 'grid', groups: ['layout'], keywords: ['overview', 'group', 'organize']},
   {id: 'dashboard', groups: ['layout'], keywords: ['overview', 'group', 'organize']},
-  {
-    id: 'row',
-    groups: ['layout'],
-    keywords: ['table'],
-  },
-  {
-    id: 'column',
-    groups: ['layout'],
-    keywords: ['table'],
-  },
   {id: 'projects', groups: ['content', 'layout'], keywords: ['overview']},
   {
     id: 'upgrade',
@@ -255,11 +239,6 @@ export const icons: IconData[] = [
     keywords: ['video', 'audio', 'stop'],
   },
   {
-    id: 'stop',
-    groups: ['media'],
-    keywords: ['video', 'audio', 'pause'],
-  },
-  {
     id: 'previous',
     groups: ['media'],
     keywords: ['video', 'audio', 'back', 'return', 'rewind'],
@@ -281,19 +260,9 @@ export const icons: IconData[] = [
     keywords: ['bar', 'graph'],
   },
   {
-    id: 'health',
-    groups: ['chart'],
-    keywords: ['vital', 'status'],
-  },
-  {
     id: 'file',
     groups: ['file', 'content'],
     keywords: ['document'],
-  },
-  {
-    id: 'folder',
-    groups: ['content', 'file'],
-    keywords: ['directory'],
   },
   {
     id: 'search',
@@ -326,16 +295,6 @@ export const icons: IconData[] = [
     keywords: [],
   },
   {
-    id: 'image',
-    groups: ['file', 'media', 'content'],
-    keywords: ['screenshot', 'photo', 'jpg', 'png'],
-  },
-  {
-    id: 'text',
-    groups: ['content'],
-    keywords: ['input'],
-  },
-  {
     id: 'code',
     groups: ['content'],
     keywords: ['snippet'],
@@ -352,16 +311,6 @@ export const icons: IconData[] = [
   },
   {
     id: 'commit',
-    groups: ['content'],
-    keywords: ['git', 'github'],
-  },
-  {
-    id: 'network',
-    groups: ['content'],
-    keywords: ['git', 'github'],
-  },
-  {
-    id: 'branch',
     groups: ['content'],
     keywords: ['git', 'github'],
   },
@@ -417,19 +366,9 @@ export const icons: IconData[] = [
     keywords: ['visible'],
   },
   {
-    id: 'hide',
-    groups: ['action', 'content'],
-    keywords: ['visible', 'invisible'],
-  },
-  {
     id: 'lock',
     groups: ['action'],
     keywords: ['secure'],
-  },
-  {
-    id: 'unlock',
-    groups: ['action'],
-    keywords: ['unsecure'],
   },
   {
     id: 'grabbable',
@@ -450,11 +389,6 @@ export const icons: IconData[] = [
     id: 'megaphone',
     groups: ['other'],
     keywords: ['speaker', 'announce'],
-  },
-  {
-    id: 'lightbulb',
-    groups: ['other'],
-    keywords: ['new', 'idea', 'fresh', 'solution'],
   },
   {
     id: 'question',
@@ -512,11 +446,6 @@ export const icons: IconData[] = [
     keywords: ['microphone', 'help'],
   },
   {
-    id: 'international',
-    groups: ['content'],
-    keywords: ['globe', 'world'],
-  },
-  {
     id: 'clock',
     groups: ['content'],
     keywords: ['time', 'watch'],
@@ -560,21 +489,6 @@ export const icons: IconData[] = [
     keywords: ['wrench', 'resolve'],
   },
   {
-    id: 'send',
-    groups: ['content', 'action'],
-    keywords: ['email', 'submit'],
-  },
-  {
-    id: 'gift',
-    groups: ['content'],
-    keywords: ['present', 'box'],
-  },
-  {
-    id: 'kit',
-    groups: ['content'],
-    keywords: ['work', 'suitcase'],
-  },
-  {
     id: 'lab',
     groups: ['content', 'other'],
     keywords: ['experiment', 'test'],
@@ -585,21 +499,6 @@ export const icons: IconData[] = [
     keywords: ['price', 'category', 'group'],
   },
   {
-    id: 'creditCard',
-    groups: ['other'],
-    keywords: ['debit', 'charge', 'billing'],
-  },
-  {
-    id: 'wallet',
-    groups: ['other'],
-    keywords: ['credit', 'debit', 'charge', 'billing'],
-  },
-  {
-    id: 'home',
-    groups: ['navigation'],
-    keywords: ['house', 'welcome', 'landing'],
-  },
-  {
     id: 'broadcast',
     groups: ['action', 'content'],
     keywords: ['stream'],
@@ -608,16 +507,6 @@ export const icons: IconData[] = [
     id: 'telescope',
     groups: ['other'],
     keywords: [],
-  },
-  {
-    id: 'spaceship',
-    groups: ['other'],
-    keywords: [],
-  },
-  {
-    id: 'planet',
-    groups: ['other'],
-    keywords: ['saturn'],
   },
   {
     id: 'moon',
@@ -669,26 +558,6 @@ export const icons: IconData[] = [
     id: 'sound',
     groups: ['content', 'action'],
     keywords: ['audio'],
-  },
-  {
-    id: 'command',
-    groups: ['keyboard'],
-    keywords: ['key', 'modifier'],
-  },
-  {
-    id: 'shift',
-    groups: ['keyboard'],
-    keywords: ['key', 'modifier'],
-  },
-  {
-    id: 'option',
-    groups: ['keyboard'],
-    keywords: ['key', 'modifier'],
-  },
-  {
-    id: 'backspace',
-    groups: ['keyboard'],
-    keywords: ['key', 'modifier', 'back', 'delete'],
   },
   {
     id: 'sentry',
