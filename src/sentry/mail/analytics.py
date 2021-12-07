@@ -1,7 +1,7 @@
 from sentry import analytics
 
 
-class EmailNotificationSent(analytics.Event):  # type: ignore
+class EmailNotificationSent(analytics.Event):
     type = "integrations.email.notification_sent"
 
     attributes = (
