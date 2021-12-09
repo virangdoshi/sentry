@@ -81,6 +81,10 @@ function PerformanceContent({selection, location, demoMode}: Props) {
   }, [organization, location, projects]);
 
   useEffect(() => {
+    handleSearch('');
+  }, [isMetricsData]);
+
+  useEffect(() => {
     loadOrganizationTags(api, organization.slug, selection);
     addRoutePerformanceContext(selection);
   }, [selection.projects]);
