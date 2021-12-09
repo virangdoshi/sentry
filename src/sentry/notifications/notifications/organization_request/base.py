@@ -69,18 +69,6 @@ class OrganizationRequestNotification(BaseNotification, abc.ABC):
             if provider in available_providers
         }
 
-    def send(self) -> None:
-        from sentry.notifications.notify import notify
-
-        participants_by_provider = self.get_participants()
-        if not participants_by_provider:
-            return
-
-        context = self.get_context()
-        for provider, recipients in participants_by_provider.items():
-            # TODO: use safe_execute
-            notify(provider, self, recipients, context)
-
     def get_member(self, user: User) -> OrganizationMember:
         # cache the result
         if user.id not in self.member_by_user_id:
