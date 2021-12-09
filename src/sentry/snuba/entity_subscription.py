@@ -84,7 +84,9 @@ class BaseEntitySubscription(ABC, _EntitySubscription):
     entities to support subscriptions (alerts), we need to decouple this logic.
     """
 
-    def __init__(self, aggregate: str, extra_fields: Optional[Mapping[str, Any]] = None):
+    def __init__(
+        self, aggregate: str, time_window: int, extra_fields: Optional[Mapping[str, Any]] = None
+    ):
         self.time_col = ENTITY_TIME_COLUMNS[self.entity_key]
 
     @abstractmethod
@@ -102,8 +104,10 @@ class BaseEntitySubscription(ABC, _EntitySubscription):
 
 
 class BaseEventsAndTransactionEntitySubscription(BaseEntitySubscription, ABC):
-    def __init__(self, aggregate: str, extra_fields: Optional[Mapping[str, Any]] = None):
-        super().__init__(aggregate, extra_fields)
+    def __init__(
+        self, aggregate: str, time_window: int, extra_fields: Optional[Mapping[str, Any]] = None
+    ):
+        super().__init__(aggregate, time_window, extra_fields)
         self.aggregate = aggregate
         self.event_types = None
         if extra_fields:
@@ -149,8 +153,10 @@ class SessionsEntitySubscription(BaseEntitySubscription):
     dataset = Dataset.Sessions.value
     entity_key = EntityKey.Sessions.value
 
-    def __init__(self, aggregate: str, extra_fields: Optional[Mapping[str, Any]] = None):
-        super().__init__(aggregate, extra_fields)
+    def __init__(
+        self, aggregate: str, time_window: int, extra_fields: Optional[Mapping[str, Any]] = None
+    ):
+        super().__init__(aggregate, time_window, extra_fields)
         self.aggregate = aggregate
         if not extra_fields or "org_id" not in extra_fields:
             raise InvalidQuerySubscription(
@@ -198,8 +204,10 @@ class MetricsCountersEntitySubscription(BaseEntitySubscription):
     dataset = Dataset.Metrics.value
     entity_key = EntityKey.MetricsCounters.value
 
-    def __init__(self, aggregate: str, extra_fields: Optional[Mapping[str, Any]] = None):
-        super().__init__(aggregate, extra_fields)
+    def __init__(
+        self, aggregate: str, time_window: int, extra_fields: Optional[Mapping[str, Any]] = None
+    ):
+        super().__init__(aggregate, time_window, extra_fields)
         self.aggregate = aggregate
         if not extra_fields or "org_id" not in extra_fields:
             raise InvalidQuerySubscription(
@@ -207,10 +215,24 @@ class MetricsCountersEntitySubscription(BaseEntitySubscription):
                 "building snuba filter for a metrics subscription"
             )
         self.org_id = extra_fields["org_id"]
+        self.time_window = time_window
 
     def get_query_groupby(self) -> List[str]:
         session_status = tag_key(self.org_id, "session.status")
         return ["project_id", session_status]
+
+    def get_granularity(self):
+        # Both time_window and granularity are in seconds
+        # Time windows <= 1h -> Granularity 10s
+        # Time windows > 1h & <= 4h -> Granularity 60s
+        # Time windows > 4h -> Granularity 1 hour
+        if self.time_window <= 3600:
+            granularity = 10
+        elif self.time_window <= 4 * 3600:
+            granularity = 60
+        else:
+            granularity = 3600
+        return granularity
 
     def build_snuba_filter(
         self,
@@ -225,14 +247,20 @@ class MetricsCountersEntitySubscription(BaseEntitySubscription):
                 "aggregations": [["sum(value)", None, "value"]],
                 "conditions": conditions + [["metric_id", "=", metric_id(self.org_id, "session")]],
                 "groupby": self.get_query_groupby(),
+                "rollup": self.get_granularity(),
             }
         )
+        print(snuba_filter.__dict__)
         if environment:
             snuba_filter.conditions.append(["environment", "=", environment.name])
         return snuba_filter
 
     def get_entity_extra_params(self) -> Mapping[str, Any]:
-        return {"organization": self.org_id, "groupby": self.get_query_groupby()}
+        return {
+            "organization": self.org_id,
+            "groupby": self.get_query_groupby(),
+            "granularity": self.get_granularity(),
+        }
 
 
 EntitySubscription = Union[
@@ -250,7 +278,10 @@ ENTITY_KEY_TO_ENTITY_SUBSCRIPTION: Mapping[EntityKey, Type[EntitySubscription]] 
 
 
 def get_entity_subscription_for_dataset(
-    dataset: QueryDatasets, aggregate: str, extra_fields: Optional[Mapping[str, Any]] = None
+    dataset: QueryDatasets,
+    aggregate: str,
+    time_window: int,
+    extra_fields: Optional[Mapping[str, Any]] = None,
 ) -> EntitySubscription:
     """
     Function that routes to the correct instance of `EntitySubscription` based on the dataset,
@@ -258,7 +289,7 @@ def get_entity_subscription_for_dataset(
     metrics datasets then returns the instance of `EntitySubscription`
     """
     return ENTITY_KEY_TO_ENTITY_SUBSCRIPTION[map_aggregate_to_entity_key(dataset, aggregate)](
-        aggregate, extra_fields
+        aggregate, time_window, extra_fields
     )
 
 

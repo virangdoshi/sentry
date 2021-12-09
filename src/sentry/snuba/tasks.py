@@ -86,7 +86,9 @@ def update_subscription_in_snuba(query_subscription_id, old_dataset=None, **kwar
 
     if subscription.subscription_id is not None:
         dataset = old_dataset if old_dataset is not None else subscription.snuba_query.dataset
-        _delete_from_snuba(QueryDatasets(dataset), subscription.subscription_id)
+        _delete_from_snuba(
+            QueryDatasets(dataset), subscription.subscription_id, subscription.snuba_query.aggregate
+        )
 
     subscription_id = _create_in_snuba(subscription)
     subscription.update(
@@ -147,6 +149,7 @@ def _create_in_snuba(subscription: QuerySubscription) -> str:
     entity_subscription = get_entity_subscription_for_dataset(
         dataset=QueryDatasets(snuba_query.dataset),
         aggregate=snuba_query.aggregate,
+        time_window=snuba_query.time_window,
         extra_fields={
             "org_id": subscription.project.organization_id,
             "event_types": snuba_query.event_types,
