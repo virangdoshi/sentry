@@ -19,7 +19,6 @@ import {t} from 'sentry/locale';
 import {PageContent, PageHeader} from 'sentry/styles/organization';
 import {GlobalSelection} from 'sentry/types';
 import {trackAnalyticsEvent} from 'sentry/utils/analytics';
-import EventView from 'sentry/utils/discover/eventView';
 import {PerformanceEventViewProvider} from 'sentry/utils/performance/contexts/performanceEventViewContext';
 import useApi from 'sentry/utils/useApi';
 import useOrganization from 'sentry/utils/useOrganization';
@@ -42,7 +41,6 @@ type Props = {
 };
 
 type State = {
-  eventView: EventView;
   error?: string;
 };
 
@@ -54,9 +52,6 @@ function PerformanceContent({selection, location, demoMode}: Props) {
   const previousDateTime = usePrevious(selection.datetime);
 
   const [state, setState] = useState<State>({
-    eventView: generatePerformanceEventView(location, organization, projects, {
-      isMetricsData,
-    }),
     error: undefined,
   });
 
@@ -72,19 +67,6 @@ function PerformanceContent({selection, location, demoMode}: Props) {
   }, []);
 
   useEffect(() => {
-    setState({
-      ...state,
-      eventView: generatePerformanceEventView(location, organization, projects, {
-        isMetricsData,
-      }),
-    });
-  }, [organization, location, projects]);
-
-  useEffect(() => {
-    handleSearch('');
-  }, [isMetricsData]);
-
-  useEffect(() => {
     loadOrganizationTags(api, organization.slug, selection);
     addRoutePerformanceContext(selection);
   }, [selection.projects]);
@@ -96,7 +78,11 @@ function PerformanceContent({selection, location, demoMode}: Props) {
     }
   }, [selection.datetime]);
 
-  const {eventView, error} = state;
+  const {error} = state;
+
+  const eventView = generatePerformanceEventView(location, organization, projects, {
+    isMetricsData,
+  });
 
   function shouldShowOnboarding() {
     // XXX used by getsentry to bypass onboarding for the upsell demo state.
