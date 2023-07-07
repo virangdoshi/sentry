@@ -2075,13 +2075,13 @@
     "@swc/helpers" "^0.4.14"
     clsx "^1.1.1"
 
-"@react-stately/collections@^3.8.0":
-  version "3.8.0"
-  resolved "https://registry.yarnpkg.com/@react-stately/collections/-/collections-3.8.0.tgz#4b2b71866d12fd6b4f4aea495e2d4ecb2954d4e6"
-  integrity sha512-NIRE8Gha0XZTnbvh9JRZM7oI/6uLf6ozjB7myja29IX7hDvsZxITe0RFXBapcujlpXLU2uufssJPKpiwJm3vZQ==
+"@react-stately/collections@^3.8.0", "@react-stately/collections@^3.9.0":
+  version "3.9.0"
+  resolved "https://registry.yarnpkg.com/@react-stately/collections/-/collections-3.9.0.tgz#8a9e621fb10e370bd0329f96dd141bc6dcd0e548"
+  integrity sha512-CBpXSKmCpbIFpIToVFlzo2R1/Cj+dcU8gWw2KfPyyJX+2wHKkDIvtK01EAytDLX/vkE8O+fD5a7qMZ3pf8gpeA==
   dependencies:
     "@react-types/shared" "^3.18.1"
-    "@swc/helpers" "^0.4.14"
+    "@swc/helpers" "^0.5.0"
 
 "@react-stately/grid@^3.6.1":
   version "3.6.1"
@@ -2146,15 +2146,15 @@
     "@react-types/shared" "^3.18.1"
     "@swc/helpers" "^0.4.14"
 
-"@react-stately/selection@^3.13.1":
-  version "3.13.1"
-  resolved "https://registry.yarnpkg.com/@react-stately/selection/-/selection-3.13.1.tgz#17752ed81bf0f3246cd010818c460fa0d749d3a1"
-  integrity sha512-0B+gT6hyei/pzUSmrNliphoztOPZJ7v/xVT9b4HViRTwuOUQlmwi5BQai84EbVtgQaQghc07sJ/Y/Ec8WXCRHA==
+"@react-stately/selection@^3.13.1", "@react-stately/selection@^3.13.2":
+  version "3.13.2"
+  resolved "https://registry.yarnpkg.com/@react-stately/selection/-/selection-3.13.2.tgz#9b0b717b0da4c84ec412a0e5068f6798ec37ddbd"
+  integrity sha512-rVnseneG9XWuS0+JEsa0EhRfTZsupm9JiEuZHZ19YeLewjVdFpjgBMDZb8ZYoyilNXVjyUwaoq94FsOXotsg9w==
   dependencies:
-    "@react-stately/collections" "^3.8.0"
-    "@react-stately/utils" "^3.6.0"
+    "@react-stately/collections" "^3.9.0"
+    "@react-stately/utils" "^3.7.0"
     "@react-types/shared" "^3.18.1"
-    "@swc/helpers" "^0.4.14"
+    "@swc/helpers" "^0.5.0"
 
 "@react-stately/tabs@^3.4.1":
   version "3.4.1"
@@ -2177,23 +2177,23 @@
     "@react-types/shared" "^3.18.1"
     "@swc/helpers" "^0.4.14"
 
-"@react-stately/tree@^3.6.1":
-  version "3.6.1"
-  resolved "https://registry.yarnpkg.com/@react-stately/tree/-/tree-3.6.1.tgz#191daac8dfd52a3603e2e138cab26fd2bfd493c3"
-  integrity sha512-KfaUoc0/PeT9W25e/7jG1VGeTO54KDKULveuUqLFJEJeP8M8vCgT5Og4YdJkPfu//dlL8OZu1y6ZpdyA9+LBsg==
+"@react-stately/tree@^3.6.1", "@react-stately/tree@^3.7.0":
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/@react-stately/tree/-/tree-3.7.0.tgz#fe658143cfec2d50921eeb7a9d2fad9c84b94dc8"
+  integrity sha512-oXOjJwy/o3XSJyBkudiEvnjWzto2jy48kmGjHCJ+B7Hv+WcbN9o7iAaHv11lOqMXRSpuF9gqox4ZZCASG+smIQ==
   dependencies:
-    "@react-stately/collections" "^3.8.0"
-    "@react-stately/selection" "^3.13.1"
-    "@react-stately/utils" "^3.6.0"
+    "@react-stately/collections" "^3.9.0"
+    "@react-stately/selection" "^3.13.2"
+    "@react-stately/utils" "^3.7.0"
     "@react-types/shared" "^3.18.1"
-    "@swc/helpers" "^0.4.14"
+    "@swc/helpers" "^0.5.0"
 
-"@react-stately/utils@^3.6.0":
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/@react-stately/utils/-/utils-3.6.0.tgz#f273e7fcb348254347d2e88c8f0c45571060c207"
-  integrity sha512-rptF7iUWDrquaYvBAS4QQhOBQyLBncDeHF03WnHXAxnuPJXNcr9cXJtjJPGCs036ZB8Q2hc9BGG5wNyMkF5v+Q==
+"@react-stately/utils@^3.6.0", "@react-stately/utils@^3.7.0":
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/@react-stately/utils/-/utils-3.7.0.tgz#ea99c2c4b5fba7e5079434a1de1ef53fbb21f6a8"
+  integrity sha512-VbApRiUV2rhozOfk0Qj9xt0qjVbQfLTgAzXLdrfeZSBnyIgo1bFRnjDpnDZKZUUCeGQcJJI03I9niaUtY+kwJQ==
   dependencies:
-    "@swc/helpers" "^0.4.14"
+    "@swc/helpers" "^0.5.0"
 
 "@react-stately/virtualizer@^3.5.2":
   version "3.5.2"
@@ -2556,6 +2556,13 @@
   version "0.4.14"
   resolved "https://registry.yarnpkg.com/@swc/helpers/-/helpers-0.4.14.tgz#1352ac6d95e3617ccb7c1498ff019654f1e12a74"
   integrity sha512-4C7nX/dvpzB7za4Ql9K81xK3HPxCpHMgwTZVyf+9JQ6VUbn9jjZVN7/Nkdz/Ugzs2CSjqnL/UPXroiVBVHUWUw==
+  dependencies:
+    tslib "^2.4.0"
+
+"@swc/helpers@^0.5.0":
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/@swc/helpers/-/helpers-0.5.1.tgz#e9031491aa3f26bfcc974a67f48bd456c8a5357a"
+  integrity sha512-sJ902EfIzn1Fa+qYmjdQqh8tPsoxyBz+8yBKC2HKUxyezKJFwPGOn7pv4WY6QuQW//ySQi5lJjA/ZT9sNWWNTg==
   dependencies:
     tslib "^2.4.0"
 
