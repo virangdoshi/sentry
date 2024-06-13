@@ -171,7 +171,7 @@ class RedisQuota(Quota):
                 target = client.target_key(str(organization_id))
                 results = [get_usage_for_quota(target, quota) for quota in quotas]
         else:
-            AssertionError("unreachable")
+            raise AssertionError("unreachable")
 
         return [get_value_for_result(*r) for r in results]
 
