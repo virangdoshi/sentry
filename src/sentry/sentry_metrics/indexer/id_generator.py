@@ -1,5 +1,5 @@
-import random
 import time
+import secrets
 
 _VERSION_BITS = 4
 _TS_BITS = 32
@@ -45,7 +45,7 @@ def get_id() -> int:
 
     now = int(time.time())
     time_since_epoch = now - _INDEXER_EPOCH_START
-    rand = random.getrandbits(_RANDOM_BITS)
+    rand = secrets.SystemRandom().getrandbits(_RANDOM_BITS)
 
     id = _VERSION_PREFIX << (_TOTAL_BITS - _VERSION_BITS)
     id |= time_since_epoch << (_TOTAL_BITS - _VERSION_BITS - _TS_BITS)

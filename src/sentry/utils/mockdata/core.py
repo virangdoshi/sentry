@@ -1,12 +1,10 @@
 from __future__ import annotations
 
 import itertools
-import random
 import time
 from collections.abc import Mapping
 from datetime import datetime, timedelta, timezone
 from hashlib import sha1
-from random import randint
 from typing import Any
 from uuid import uuid4
 
@@ -62,6 +60,7 @@ from sentry.utils import loremipsum
 from sentry.utils.hashlib import md5_text
 from sentry.utils.samples import create_sample_event as _create_sample_event
 from sentry.utils.samples import create_trace, generate_user, random_normal
+import secrets
 
 PLATFORMS = itertools.cycle(["ruby", "php", "python", "java", "javascript"])
 
@@ -98,8 +97,8 @@ DB::Exception: String is too long for DateTime: 2018-10-26T19:14:18+00:00. Stack
 
 def make_sentence(words=None):
     if words is None:
-        words = int(random.weibullvariate(8, 3))
-    return " ".join(random.choice(loremipsum.words) for _ in range(words))
+        words = int(secrets.SystemRandom().weibullvariate(8, 3))
+    return " ".join(secrets.choice(loremipsum.words) for _ in range(words))
 
 
 def create_sample_event(*args, **kwargs):
@@ -115,17 +114,17 @@ def create_sample_event(*args, **kwargs):
 
 def generate_commit_data(user):
     commits = []
-    for i in range(random.randint(1, 20)):
+    for i in range(secrets.SystemRandom().randint(1, 20)):
         if i == 1:
             filename = "raven/base.py"
         else:
-            filename = random.choice(loremipsum.words) + ".js"
-        if random.randint(0, 5) == 1:
+            filename = secrets.choice(loremipsum.words) + ".js"
+        if secrets.SystemRandom().randint(0, 5) == 1:
             author = (user.name, user.email)
         else:
             author = (
-                f"{random.choice(loremipsum.words)} {random.choice(loremipsum.words)}",
-                f"{random.choice(loremipsum.words)}@example.com",
+                f"{secrets.choice(loremipsum.words)} {secrets.choice(loremipsum.words)}",
+                f"{secrets.choice(loremipsum.words)}@example.com",
             )
 
         commits.append(
@@ -167,7 +166,7 @@ def create_system_time_series():
     now = datetime.now(timezone.utc)
 
     for _ in range(60):
-        count = randint(1, 10)
+        count = secrets.SystemRandom().randint(1, 10)
         tsdb.backend.incr_multi(
             (
                 (TSDBModel.internal, "client-api.all-versions.responses.2xx"),
@@ -189,7 +188,7 @@ def create_system_time_series():
         now = now - timedelta(seconds=1)
 
     for _ in range(24 * 30):
-        count = randint(100, 1000)
+        count = secrets.SystemRandom().randint(100, 1000)
         tsdb.backend.incr_multi(
             (
                 (TSDBModel.internal, "client-api.all-versions.responses.2xx"),
@@ -235,7 +234,7 @@ def create_sample_time_series(event, release=None):
         )
 
     for _ in range(60):
-        count = randint(1, 10)
+        count = secrets.SystemRandom().randint(1, 10)
         tsdb.backend.incr_multi(
             ((TSDBModel.project, project.id), (TSDBModel.group, group.id)),
             now,
@@ -281,7 +280,7 @@ def create_sample_time_series(event, release=None):
         now = now - timedelta(seconds=1)
 
     for _ in range(24 * 30):
-        count = randint(100, 1000)
+        count = secrets.SystemRandom().randint(100, 1000)
         tsdb.backend.incr_multi(
             ((TSDBModel.project, group.project.id), (TSDBModel.group, group.id)),
             now,
@@ -541,7 +540,7 @@ def populate_release(
                 defaults={"name": user.name},
             )[0],
             "message": "feat: Do something to {}\n{}".format(
-                random.choice(loremipsum.words) + ".js", make_sentence()
+                secrets.choice(loremipsum.words) + ".js", make_sentence()
             ),
         },
     )[0]

@@ -1,4 +1,3 @@
-import random
 import string
 
 from django.core.validators import RegexValidator
@@ -7,6 +6,7 @@ from django.utils.text import slugify
 
 from sentry.slug.errors import DEFAULT_SLUG_ERROR_MESSAGE
 from sentry.slug.patterns import MIXED_SLUG_PATTERN
+import secrets
 
 
 def validate_sentry_slug(slug: str) -> None:
@@ -28,5 +28,5 @@ def sentry_slugify(slug: str, allow_unicode=False) -> str:
     """
     slug = slugify(slug, allow_unicode=allow_unicode)
     if slug.isdecimal():
-        slug = f"{slug}-{''.join(random.choice(string.ascii_lowercase) for _ in range(3))}"
+        slug = f"{slug}-{''.join(secrets.choice(string.ascii_lowercase) for _ in range(3))}"
     return slug

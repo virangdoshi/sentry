@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import random
 from typing import Any
 
 from django.conf import settings
@@ -18,6 +17,7 @@ from sentry.api.exceptions import ResourceDoesNotExist
 from sentry.types.ratelimit import RateLimit, RateLimitCategory
 from sentry.utils import json
 from sentry.utils.cache import cache
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -263,7 +263,7 @@ def describe_event_for_ai(event, model):
 
 def suggest_fix(event_data, model="gpt-3.5-turbo-16k", stream=False):
     """Runs an OpenAI request to suggest a fix."""
-    prompt = PROMPT.replace("___FUN_PROMPT___", random.choice(FUN_PROMPT_CHOICES))
+    prompt = PROMPT.replace("___FUN_PROMPT___", secrets.choice(FUN_PROMPT_CHOICES))
     event_info = describe_event_for_ai(event_data, model=model)
 
     client = get_openai_client()

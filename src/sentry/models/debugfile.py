@@ -6,7 +6,6 @@ import hashlib
 import logging
 import os
 import os.path
-import random
 import re
 import shutil
 import tempfile
@@ -38,6 +37,7 @@ from sentry.models.files.utils import clear_cached_files
 from sentry.reprocessing import bump_reprocessing_revision, resolve_processing_issue
 from sentry.utils import json
 from sentry.utils.zip import safe_extract_zip
+import secrets
 
 if TYPE_CHECKING:
     from sentry.models.project import Project
@@ -637,7 +637,7 @@ class DIFCache:
         # right here so we don't overload filestore.
         # Note: this random rollout is reversed because it is an early return
         if features is not None:
-            if "mapping" in features and random.random() >= options.get(
+            if "mapping" in features and secrets.SystemRandom().random() >= options.get(
                 "filestore.proguard-throttle"
             ):
                 return {}

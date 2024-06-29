@@ -67,6 +67,7 @@ from sentry.utils.http import absolute_uri
 from sentry.utils.samples import load_data
 from sentry.web.decorators import login_required
 from sentry.web.helpers import render_to_response, render_to_string
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -107,24 +108,24 @@ COMMIT_EXAMPLE = """[
 
 def get_random(request) -> Random:
     seed = request.GET.get("seed", str(time.time()))
-    return Random(seed)
+    return secrets.SystemRandom().Random(seed)
 
 
 def make_message(random: Random, length: int | None = None) -> str:
     if length is None:
-        length = int(random.weibullvariate(8, 3))
-    return " ".join(random.choice(loremipsum.words) for _ in range(length))
+        length = int(secrets.SystemRandom().weibullvariate(8, 3))
+    return " ".join(secrets.choice(loremipsum.words) for _ in range(length))
 
 
 def make_culprit(random: Random) -> str:
     def make_module_path_components(min, max):
-        for _ in range(random.randint(min, max)):
+        for _ in range(secrets.SystemRandom().randint(min, max)):
             yield "".join(
-                random.sample(loremipsum.words, random.randint(1, int(random.paretovariate(2.2))))
+                secrets.SystemRandom().sample(loremipsum.words, secrets.SystemRandom().randint(1, int(secrets.SystemRandom().paretovariate(2.2))))
             )
 
     return "{module} in {function}".format(
-        module=".".join(make_module_path_components(1, 4)), function=random.choice(loremipsum.words)
+        module=".".join(make_module_path_components(1, 4)), function=secrets.choice(loremipsum.words)
     )
 
 
@@ -134,7 +135,7 @@ def make_group_metadata(random: Random) -> dict[str, Any]:
         "metadata": {
             "type": "{}Error".format(
                 "".join(
-                    word.title() for word in random.sample(loremipsum.words, random.randint(1, 3))
+                    word.title() for word in secrets.SystemRandom().sample(loremipsum.words, secrets.SystemRandom().randint(1, 3))
                 )
             ),
             "value": make_message(random),
@@ -145,12 +146,12 @@ def make_group_metadata(random: Random) -> dict[str, Any]:
 def make_group_generator(random: Random, project: Project) -> Generator[Group, None, None]:
     epoch = int(to_timestamp(datetime(2016, 6, 1, 0, 0, 0, tzinfo=timezone.utc)))
     for id in itertools.count(1):
-        first_seen = epoch + random.randint(0, 60 * 60 * 24 * 30)
-        last_seen = random.randint(first_seen, first_seen + (60 * 60 * 24 * 30))
+        first_seen = epoch + secrets.SystemRandom().randint(0, 60 * 60 * 24 * 30)
+        last_seen = secrets.SystemRandom().randint(first_seen, first_seen + (60 * 60 * 24 * 30))
         times_seen = 98765
 
         culprit = make_culprit(random)
-        level = random.choice(tuple(LOG_LEVELS))
+        level = secrets.choice(tuple(LOG_LEVELS))
         message = make_message(random)
 
         group = Group(
@@ -163,11 +164,11 @@ def make_group_generator(random: Random, project: Project) -> Generator[Group, N
             first_seen=to_datetime(first_seen),
             last_seen=to_datetime(last_seen),
             times_seen=times_seen,
-            status=random.choice((GroupStatus.UNRESOLVED, GroupStatus.RESOLVED)),
+            status=secrets.choice((GroupStatus.UNRESOLVED, GroupStatus.RESOLVED)),
             data={"type": "default", "metadata": {"title": message}},
         )
-        group.has_replays = lambda: random.choice((True, False))  # type: ignore[method-assign]
-        if random.random() < 0.8:
+        group.has_replays = lambda: secrets.choice((True, False))  # type: ignore[method-assign]
+        if secrets.SystemRandom().random() < 0.8:
             group.data = make_group_metadata(random)
 
         yield group
@@ -432,13 +433,12 @@ def alert(request):
     event = make_error_event(request, project, platform)
     group = event.group
 
-    group.substatus = random.choice(
-        [GroupSubStatus.ESCALATING, GroupSubStatus.NEW, GroupSubStatus.REGRESSED]
+    group.substatus = secrets.choice([GroupSubStatus.ESCALATING, GroupSubStatus.NEW, GroupSubStatus.REGRESSED]
     )
 
     rule = Rule(id=1, label="An example rule")
     notification_reason = (
-        random.randint(0, 1) > 0
+        secrets.SystemRandom().randint(0, 1) > 0
         and f"We notified all members in the {project.get_full_name()} project of this issue"
         or None
     )
@@ -451,13 +451,13 @@ def alert(request):
             "interfaces": get_interface_list(event),
             "project_label": project.slug,
             "commits": json.loads(COMMIT_EXAMPLE),
-            "environment": random.randint(0, 1) > 0 and "prod" or None,
+            "environment": secrets.SystemRandom().randint(0, 1) > 0 and "prod" or None,
             "notification_reason": notification_reason,
             "notification_settings_link": absolute_uri(
                 "/settings/account/notifications/alerts/?referrer=alert_email"
             ),
-            "culprit": random.choice(["sentry.tasks.culprit.culprit", None]),
-            "subtitle": random.choice(["subtitles are cool", None]),
+            "culprit": secrets.choice(["sentry.tasks.culprit.culprit", None]),
+            "subtitle": secrets.choice(["subtitles are cool", None]),
             "issue_type": group.issue_type.description,
             "replay_id": replay_id,
             "issue_replays_url": get_issue_replay_link(group, "?referrer=alert_email"),
@@ -473,7 +473,7 @@ def digest(request):
     org = Organization(id=1, slug="example", name="Example Organization")
     project = Project(id=1, slug="example", name="Example Project", organization=org)
     rules = {
-        i: Rule(id=i, project=project, label=f"Rule #{i}") for i in range(1, random.randint(2, 4))
+        i: Rule(id=i, project=project, label=f"Rule #{i}") for i in range(1, secrets.SystemRandom().randint(2, 4))
     }
     state: dict[str, Any] = {
         "project": project,
@@ -485,13 +485,13 @@ def digest(request):
     records = []
     group_generator = make_group_generator(random, project)
     notification_uuid = str(uuid.uuid4())
-    for _ in range(random.randint(1, 30)):
+    for _ in range(secrets.SystemRandom().randint(1, 30)):
         group = next(group_generator)
         state["groups"][group.id] = group
 
         offset = timedelta(seconds=0)
-        for _ in range(random.randint(1, 10)):
-            offset += timedelta(seconds=random.random() * 120)
+        for _ in range(secrets.SystemRandom().randint(1, 10)):
+            offset += timedelta(seconds=secrets.SystemRandom().random() * 120)
 
             data_dct = dict(load_data("python"))
             data_dct["message"] = group.message
@@ -501,8 +501,7 @@ def digest(request):
             event_manager.normalize()
             data = event_manager.get_data()
 
-            data["timestamp"] = random.randint(
-                int(to_timestamp(group.first_seen)), int(to_timestamp(group.last_seen))
+            data["timestamp"] = secrets.SystemRandom().randint(int(to_timestamp(group.first_seen)), int(to_timestamp(group.last_seen))
             )
 
             event = eventstore.backend.create_event(
@@ -513,8 +512,7 @@ def digest(request):
                     event.event_id,
                     Notification(
                         event,
-                        random.sample(
-                            list(state["rules"].keys()), random.randint(1, len(state["rules"]))
+                        secrets.SystemRandom().sample(list(state["rules"].keys()), secrets.SystemRandom().randint(1, len(state["rules"]))
                         ),
                         notification_uuid,
                     ),
@@ -522,11 +520,11 @@ def digest(request):
                 )
             )
 
-            state["event_counts"][group.id] = random.randint(10, 10000)
-            state["user_counts"][group.id] = random.randint(10, 10000)
+            state["event_counts"][group.id] = secrets.SystemRandom().randint(10, 10000)
+            state["user_counts"][group.id] = secrets.SystemRandom().randint(10, 10000)
 
     # add in performance issues
-    for i in range(random.randint(1, 3)):
+    for i in range(secrets.SystemRandom().randint(1, 3)):
         perf_event = make_performance_event(project, "transaction-n-plus-one")
         # don't clobber error issue ids
         perf_event.group.id = i + 100
@@ -537,8 +535,7 @@ def digest(request):
                 perf_event.event_id,
                 Notification(
                     perf_event,
-                    random.sample(
-                        list(state["rules"].keys()), random.randint(1, len(state["rules"]))
+                    secrets.SystemRandom().sample(list(state["rules"].keys()), secrets.SystemRandom().randint(1, len(state["rules"]))
                     ),
                     notification_uuid,
                 ),
@@ -547,11 +544,11 @@ def digest(request):
             )
         )
         state["groups"][perf_group.id] = perf_group
-        state["event_counts"][perf_group.id] = random.randint(10, 10000)
-        state["user_counts"][perf_group.id] = random.randint(10, 10000)
+        state["event_counts"][perf_group.id] = secrets.SystemRandom().randint(10, 10000)
+        state["user_counts"][perf_group.id] = secrets.SystemRandom().randint(10, 10000)
 
     # add in generic issues
-    for i in range(random.randint(1, 3)):
+    for i in range(secrets.SystemRandom().randint(1, 3)):
         generic_event = make_generic_event(project)
         generic_group = generic_event.group
         generic_group.id = i + 200  # don't clobber other issue ids
@@ -561,8 +558,7 @@ def digest(request):
                 generic_event.event_id,
                 Notification(
                     generic_event,
-                    random.sample(
-                        list(state["rules"].keys()), random.randint(1, len(state["rules"]))
+                    secrets.SystemRandom().sample(list(state["rules"].keys()), secrets.SystemRandom().randint(1, len(state["rules"]))
                     ),
                     notification_uuid,
                 ),
@@ -571,8 +567,8 @@ def digest(request):
             )
         )
         state["groups"][generic_group.id] = generic_group
-        state["event_counts"][generic_group.id] = random.randint(10, 10000)
-        state["user_counts"][generic_group.id] = random.randint(10, 10000)
+        state["event_counts"][generic_group.id] = secrets.SystemRandom().randint(10, 10000)
+        state["user_counts"][generic_group.id] = secrets.SystemRandom().randint(10, 10000)
 
     digest, _ = build_digest(project, records, state)
     assert digest is not None

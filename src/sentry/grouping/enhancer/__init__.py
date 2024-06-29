@@ -3,7 +3,6 @@ from __future__ import annotations
 import base64
 import logging
 import os
-import random
 import zlib
 from collections.abc import Sequence
 from hashlib import md5
@@ -38,6 +37,7 @@ from .matchers import (
     Match,
     create_match_frame,
 )
+import secrets
 
 DATADOG_KEY = "save_event.stacktrace"
 logger = logging.getLogger(__name__)
@@ -163,7 +163,7 @@ def parse_rust_enhancements(
     parse_rust_enhancements = force_parsing
     if not force_parsing:
         try:
-            parse_rust_enhancements = random.random() < options.get(
+            parse_rust_enhancements = secrets.SystemRandom().random() < options.get(
                 "grouping.rust_enhancers.parse_rate"
             )
         except Exception:

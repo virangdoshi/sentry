@@ -4,7 +4,6 @@ import logging
 import uuid
 from collections.abc import Callable, Collection, Mapping, MutableMapping, Sequence
 from datetime import timedelta
-from random import randrange
 from typing import Any
 
 from django.core.cache import cache
@@ -23,6 +22,7 @@ from sentry.rules.filters.base import EventFilter
 from sentry.types.rules import RuleFuture
 from sentry.utils.hashlib import hash_values
 from sentry.utils.safe import safe_execute
+import secrets
 
 SLOW_CONDITION_MATCHES = ["event_frequency"]
 
@@ -252,7 +252,7 @@ class RuleProcessor:
         if not updated:
             return
 
-        if randrange(10) == 0:
+        if secrets.SystemRandom().randrange(10) == 0:
             analytics.record(
                 "issue_alert.fired",
                 issue_id=self.group.id,

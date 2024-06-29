@@ -1,9 +1,9 @@
 import logging
-import random
 import time
 from contextlib import contextmanager
 
 from sentry.utils.locking import UnableToAcquireLock
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ class Lock:
             try:
                 return self.acquire()
             except UnableToAcquireLock:
-                delay = (exp_base**attempt) * random.random() * initial_delay
+                delay = (exp_base**attempt) * secrets.SystemRandom().random() * initial_delay
                 # Redundant check to prevent futile sleep in last iteration:
                 if time.monotonic() + delay > stop:
                     break

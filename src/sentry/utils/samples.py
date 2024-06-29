@@ -1,6 +1,5 @@
 import logging
 import os.path
-import random
 import time
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
@@ -14,13 +13,14 @@ from sentry.spans.grouping.utils import hash_values
 from sentry.utils import json
 from sentry.utils.canonical import CanonicalKeyDict
 from sentry.utils.dates import to_timestamp
+import secrets
 
 logger = logging.getLogger(__name__)
 epoch = datetime.fromtimestamp(0)
 
 
 def random_normal(mu, sigma, minimum, maximum=None):
-    random_value = max(random.normalvariate(mu, sigma), minimum)
+    random_value = max(secrets.SystemRandom().normalvariate(mu, sigma), minimum)
     if maximum is not None:
         random_value = min(random_value, maximum)
     return random_value
@@ -29,23 +29,22 @@ def random_normal(mu, sigma, minimum, maximum=None):
 def random_ip():
     not_valid = [10, 127, 169, 172, 192]
 
-    first = random.randrange(1, 256)
+    first = secrets.SystemRandom().randrange(1, 256)
     while first in not_valid:
-        first = random.randrange(1, 256)
+        first = secrets.SystemRandom().randrange(1, 256)
 
     return ".".join(
         (
             str(first),
-            str(random.randrange(1, 256)),
-            str(random.randrange(1, 256)),
-            str(random.randrange(1, 256)),
+            str(secrets.SystemRandom().randrange(1, 256)),
+            str(secrets.SystemRandom().randrange(1, 256)),
+            str(secrets.SystemRandom().randrange(1, 256)),
         )
     )
 
 
 def random_geo():
-    return random.choice(
-        [
+    return secrets.choice([
             {"country_code": "US", "region": "CA", "city": "San Francisco"},
             {"country_code": "AU", "region": "VIC", "city": "Melbourne"},
             {"country_code": "GB", "region": "H9", "city": "London"},
@@ -54,8 +53,7 @@ def random_geo():
 
 
 def random_username():
-    return random.choice(
-        [
+    return secrets.choice([
             "jess",
             "david",
             "chris",
@@ -505,7 +503,7 @@ def create_trace(slow, start_timestamp, timestamp, user, trace_id, parent_span_i
                 "trace": {
                     "type": "trace",
                     "trace_id": trace_id,
-                    "span_id": random.choice(spans + [{"span_id": current_span_id}])["span_id"],
+                    "span_id": secrets.choice(spans + [{"span_id": current_span_id}])["span_id"],
                 }
             },
         )

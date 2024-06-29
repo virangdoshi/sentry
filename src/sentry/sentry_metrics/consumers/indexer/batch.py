@@ -1,5 +1,4 @@
 import logging
-import random
 from collections import defaultdict
 from collections.abc import Callable, Iterable, Mapping, MutableMapping, MutableSequence, Sequence
 from dataclasses import dataclass
@@ -29,6 +28,7 @@ from sentry.sentry_metrics.consumers.indexer.routing_producer import RoutingPayl
 from sentry.sentry_metrics.indexer.base import Metadata
 from sentry.sentry_metrics.use_case_id_registry import UseCaseID, extract_use_case_id
 from sentry.utils import json, metrics
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +53,7 @@ def valid_metric_name(name: str | None) -> bool:
 
 def _should_sample_debug_log() -> bool:
     rate: float = settings.SENTRY_METRICS_INDEXER_DEBUG_LOG_SAMPLE_RATE
-    return (rate > 0) and random.random() <= rate
+    return (rate > 0) and secrets.SystemRandom().random() <= rate
 
 
 @dataclass

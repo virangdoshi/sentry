@@ -1,5 +1,4 @@
 import logging
-import random
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from time import time
@@ -32,6 +31,7 @@ from sentry.utils.canonical import CANONICAL_TYPES, CanonicalKeyDict
 from sentry.utils.dates import to_datetime
 from sentry.utils.safe import safe_execute
 from sentry.utils.sdk import set_current_event_project
+import secrets
 
 error_logger = logging.getLogger("sentry.errors.events")
 info_logger = logging.getLogger("sentry.store")
@@ -319,7 +319,7 @@ def is_process_disabled(project_id: int, event_id: str, platform: str) -> bool:
     if not rollout_rate:
         return False
 
-    return random.random() < rollout_rate
+    return secrets.SystemRandom().random() < rollout_rate
 
 
 def do_process_event(

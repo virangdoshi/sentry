@@ -1,6 +1,5 @@
 import logging
 import math
-import random
 from collections import namedtuple
 from collections.abc import Sequence
 from copy import deepcopy
@@ -44,6 +43,7 @@ from sentry.utils.snuba import (
     resolve_column,
     to_naive_timestamp,
 )
+import secrets
 
 __all__ = (
     "PaginationResult",
@@ -170,8 +170,8 @@ def zerofill(data, start, end, rollup, orderby, time_col_name=None):
 
 def transform_tips(tips):
     return {
-        "query": random.choice(list(tips["query"])) if tips["query"] else None,
-        "columns": random.choice(list(tips["columns"])) if tips["columns"] else None,
+        "query": secrets.choice(list(tips["query"])) if tips["query"] else None,
+        "columns": secrets.choice(list(tips["columns"])) if tips["columns"] else None,
     }
 
 

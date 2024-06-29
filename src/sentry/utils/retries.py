@@ -1,13 +1,13 @@
 import functools
 import itertools
 import logging
-import random
 import time
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from typing import TypeVar
 
 from django.utils.encoding import force_bytes
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -136,7 +136,7 @@ class TimedRetryPolicy(RetryPolicy):
         if delay is None:
             # 100ms +/- 50ms of randomized jitter
             def delay(i):
-                return 0.1 + ((random.random() - 0.5) / 10)
+                return 0.1 + ((secrets.SystemRandom().random() - 0.5) / 10)
 
         self.timeout = timeout
         self.delay = delay

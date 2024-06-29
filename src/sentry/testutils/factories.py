@@ -3,7 +3,6 @@ from __future__ import annotations
 import contextlib
 import io
 import os
-import random
 from base64 import b64encode
 from binascii import hexlify
 from collections.abc import Mapping, Sequence
@@ -149,6 +148,7 @@ from sentry.types.region import Region, get_local_region, get_region_by_name
 from sentry.utils import json, loremipsum
 from sentry.utils.performance_issues.performance_problem import PerformanceProblem
 from social_auth.models import UserSocialAuth
+import secrets
 
 
 def get_fixture_path(*parts: str) -> str:
@@ -160,14 +160,14 @@ def get_fixture_path(*parts: str) -> str:
 
 def make_sentence(words=None):
     if words is None:
-        words = int(random.weibullvariate(8, 3))
-    return " ".join(random.choice(loremipsum.words) for _ in range(words))
+        words = int(secrets.SystemRandom().weibullvariate(8, 3))
+    return " ".join(secrets.choice(loremipsum.words) for _ in range(words))
 
 
 def make_word(words=None):
     if words is None:
-        words = int(random.weibullvariate(8, 3))
-    return random.choice(loremipsum.words)
+        words = int(secrets.SystemRandom().weibullvariate(8, 3))
+    return secrets.choice(loremipsum.words)
 
 
 DEFAULT_EVENT_DATA = {
@@ -742,7 +742,7 @@ class Factories:
         repo, _ = Repository.objects.get_or_create(
             organization_id=project.organization_id,
             name=name
-            or "{}-{}".format(petname.generate(2, "", letters=10), random.randint(1000, 9999)),
+            or "{}-{}".format(petname.generate(2, "", letters=10), secrets.SystemRandom().randint(1000, 9999)),
             provider=provider,
             integration_id=integration_id,
             url=url,

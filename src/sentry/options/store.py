@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import dataclasses
 import logging
-from random import random
 from time import time
 from typing import Any
 
@@ -12,6 +11,7 @@ from django.utils import timezone
 
 from sentry.db.postgres.transactions import in_test_hide_transaction_boundary
 from sentry.options.manager import UpdateChannel
+import secrets
 
 CACHE_FETCH_ERR = "Unable to fetch option cache for %s"
 CACHE_UPDATE_ERR = "Unable to update option cache for %s"
@@ -337,7 +337,7 @@ class OptionsStore:
         # been fetched since they've expired.
         if not self._local_cache:
             return
-        if random() < 0.25:
+        if secrets.SystemRandom().random() < 0.25:
             self.clean_local_cache()
 
     def close(self) -> None:

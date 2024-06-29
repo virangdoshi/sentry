@@ -1,10 +1,10 @@
 import logging
-import random
 import threading
 import time
 from contextlib import contextmanager
 
 from django.conf import settings
+import secrets
 
 logger = logging.getLogger("sentry.bgtasks")
 tasks = {}
@@ -33,7 +33,7 @@ class BgTask:
             return
         self.running = True
 
-        next_run = time.time() + self.interval * random.random()
+        next_run = time.time() + self.interval * secrets.SystemRandom().random()
         while self.running:
             now = time.time()
             if now >= next_run:

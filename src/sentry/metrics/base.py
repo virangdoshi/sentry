@@ -1,7 +1,8 @@
+import secrets
+
 __all__ = ["MetricsBackend"]
 
 from collections.abc import Mapping, MutableMapping
-from random import random
 from threading import local
 from typing import Union
 
@@ -30,7 +31,7 @@ class MetricsBackend(local):
         return key
 
     def _should_sample(self, sample_rate: float) -> bool:
-        return sample_rate >= 1 or random() >= 1 - sample_rate
+        return sample_rate >= 1 or secrets.SystemRandom().random() >= 1 - sample_rate
 
     def incr(
         self,

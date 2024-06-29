@@ -1,4 +1,3 @@
-import random
 from collections.abc import Sequence
 from datetime import datetime, timedelta
 
@@ -6,6 +5,7 @@ from django.utils import timezone
 
 from sentry.snuba.dataset import Dataset
 from sentry.testutils.cases import SnubaTestCase
+import secrets
 
 
 class PerfIssueTransactionTestMixin:
@@ -34,7 +34,7 @@ class PerfIssueTransactionTestMixin:
             "start_timestamp": insert_time.timestamp(),
             "received": insert_time.timestamp(),
             # we need to randomize the value here to make sure ingestion doesn't dedupe these transactions
-            "transaction": "transaction: " + str(insert_time) + str(random.randint(0, 100000000)),
+            "transaction": "transaction: " + str(insert_time) + str(secrets.SystemRandom().randint(0, 100000000)),
             "fingerprint": fingerprint,
         }
 

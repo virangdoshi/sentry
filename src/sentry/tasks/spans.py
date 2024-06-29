@@ -1,5 +1,4 @@
 import logging
-import random
 from collections.abc import Mapping, Sequence, Set
 from copy import deepcopy
 from typing import Any
@@ -23,6 +22,7 @@ from sentry.tasks.base import instrumented_task
 from sentry.utils import metrics
 from sentry.utils.canonical import CanonicalKeyDict
 from sentry.utils.sdk import mark_scope_as_unsafe
+import secrets
 
 SPAN_SCHEMA: Codec[SpanEvent] = get_codec("snuba-spans")
 
@@ -194,5 +194,5 @@ def process_segment(project_id, segment_id):
     try:
         _process_segment(project_id, segment_id)
     except Exception as err:
-        if random.random() < 0.05:
+        if secrets.SystemRandom().random() < 0.05:
             sentry_sdk.capture_exception(err)

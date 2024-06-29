@@ -1,4 +1,3 @@
-import random
 from collections.abc import Iterable
 from functools import wraps
 from typing import Any
@@ -10,6 +9,7 @@ from sentry import options
 from sentry.features.rollout import in_random_rollout
 from sentry.metrics.base import MetricsBackend, Tags
 from sentry.utils import metrics
+import secrets
 
 
 def patch_sentry_sdk():
@@ -115,7 +115,7 @@ def should_summarize_metric(key: str, tags: dict[str, Any]) -> bool:
 class MiniMetricsMetricsBackend(MetricsBackend):
     @staticmethod
     def _keep_metric(sample_rate: float) -> bool:
-        return random.random() < sample_rate
+        return secrets.SystemRandom().random() < sample_rate
 
     @staticmethod
     def _to_minimetrics_unit(unit: str | None, default: str | None = None) -> str:

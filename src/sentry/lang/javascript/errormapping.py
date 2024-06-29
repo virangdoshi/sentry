@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import random
 import re
 import time
 from urllib.parse import parse_qsl
@@ -14,6 +13,7 @@ from sentry.utils import json
 from sentry.utils.meta import Meta
 from sentry.utils.safe import get_path
 from sentry.utils.strings import count_sprintf_parameters
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +29,7 @@ error_processors: dict[str, Processor] = {}
 
 
 def is_expired(ts):
-    return ts > (time.time() - SOFT_TIMEOUT - random.random() * SOFT_TIMEOUT_FUZZINESS)
+    return ts > (time.time() - SOFT_TIMEOUT - secrets.SystemRandom().random() * SOFT_TIMEOUT_FUZZINESS)
 
 
 class Processor:

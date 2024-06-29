@@ -1,6 +1,4 @@
 from __future__ import annotations
-
-import random
 from datetime import datetime, timedelta
 
 import sentry_sdk
@@ -24,6 +22,7 @@ from sentry.models.organization import Organization
 from sentry.models.project import Project
 from sentry.utils import metrics, redis
 from sentry.utils.db import atomic_transaction
+import secrets
 
 # The number of Artifact Bundles that we return in case of incomplete indexes.
 MAX_BUNDLES_QUERY = 5
@@ -189,7 +188,7 @@ def index_urls_in_bundle(
 @sentry_sdk.tracing.trace
 def maybe_renew_artifact_bundles_from_processing(project_id: int, used_download_ids: list[str]):
     # Note: This random rollout is reversed because it is an early return
-    if random.random() >= options.get("symbolicator.sourcemaps-bundle-index-refresh-sample-rate"):
+    if secrets.SystemRandom().random() >= options.get("symbolicator.sourcemaps-bundle-index-refresh-sample-rate"):
         return
 
     artifact_bundle_ids = []

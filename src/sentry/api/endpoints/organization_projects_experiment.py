@@ -1,5 +1,4 @@
 import logging
-import random
 import string
 from email.headerregistry import Address
 
@@ -25,6 +24,7 @@ from sentry.models.project import Project
 from sentry.models.team import Team
 from sentry.signals import project_created, team_created
 from sentry.utils.snowflake import MaxSnowflakeRetryError
+import secrets
 
 CONFLICTING_TEAM_SLUG_ERROR = "A team with this slug already exists."
 MISSING_PERMISSION_ERROR_STRING = "You do not have permission to join a new team as a Team Admin."
@@ -32,7 +32,7 @@ MISSING_PERMISSION_ERROR_STRING = "You do not have permission to join a new team
 
 def _generate_suffix() -> str:
     letters = string.ascii_lowercase
-    return "".join(random.choice(letters) for _ in range(3))
+    return "".join(secrets.choice(letters) for _ in range(3))
 
 
 def fetch_slugifed_email_username(email: str) -> str:

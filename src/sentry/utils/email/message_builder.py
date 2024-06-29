@@ -6,7 +6,6 @@ import time
 from collections.abc import Callable, Iterable, Mapping, MutableMapping, Sequence
 from functools import partial
 from operator import attrgetter
-from random import randrange
 from typing import Any
 
 import lxml.html
@@ -30,6 +29,7 @@ from .address import get_from_email_domain
 from .list_resolver import ListResolver
 from .manager import get_email_addresses
 from .send import send_messages
+import secrets
 
 logger = logging.getLogger("sentry.mail")
 
@@ -61,7 +61,7 @@ def make_msgid(domain: str) -> str:
     timeval = time.time()
     utcdate = time.strftime("%Y%m%d%H%M%S", time.gmtime(timeval))
     pid = os.getpid()
-    randint = randrange(100000)
+    randint = secrets.SystemRandom().randrange(100000)
     msgid = f"<{utcdate}.{pid}.{randint}@{domain}>"
     return msgid
 

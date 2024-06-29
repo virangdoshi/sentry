@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-from random import randint
 from typing import Any
 
 from django.conf import settings
@@ -43,6 +42,7 @@ from sentry.utils.sdk import capture_exception
 from sentry.utils.urls import add_params_to_url
 from sentry.web.forms.accounts import AuthenticationForm, RegistrationForm
 from sentry.web.frontend.base import BaseView, control_silo_view
+import secrets
 
 ERR_NO_SSO = _("The organization does not exist or does not have Single Sign-On enabled.")
 
@@ -537,7 +537,7 @@ class AuthLoginView(BaseView):
                 organization=organization, request=request
             ),  # NOTE: not utilized in basic login page (only org login)
             "show_login_banner": settings.SHOW_LOGIN_BANNER,
-            "banner_choice": randint(0, 1),  # 2 possible banners
+            "banner_choice": secrets.SystemRandom().randint(0, 1),  # 2 possible banners
             "referrer": request.GET.get("referrer"),
         }
         default_context.update(additional_context.run_callbacks(request=request))
@@ -726,7 +726,7 @@ class AuthLoginView(BaseView):
                 organization=organization, request=request
             ),
             "show_login_banner": settings.SHOW_LOGIN_BANNER,
-            "banner_choice": randint(0, 1),  # 2 possible banners
+            "banner_choice": secrets.SystemRandom().randint(0, 1),  # 2 possible banners
             "referrer": request.GET.get("referrer"),
         }
 

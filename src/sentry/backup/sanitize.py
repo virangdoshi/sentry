@@ -2,13 +2,13 @@ from collections.abc import Callable
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from random import choice, randint
 
 import petname
 from dateutil.parser import parse as parse_datetime
 from django.utils.text import slugify
 
 from sentry.utils.json import JSONData
+import secrets
 
 UPPER_CASE_HEX = {"A", "B", "C", "D", "E", "F"}
 UPPER_CASE_NON_HEX = {
@@ -136,7 +136,7 @@ def default_string_sanitizer(old: str) -> str:
     if has_digit:
         chars += "0123456789"
 
-    return "".join([choice(list(chars)) for _ in range(3)])
+    return "".join([secrets.choice(list(chars)) for _ in range(3)])
 
 
 class Sanitizer:
@@ -199,7 +199,7 @@ class Sanitizer:
             next = int(datetime.timestamp(ordered_datetimes[i + 1] if i < count - 1 else dt) * 1000)
             start = int((curr - prev) / 2) + prev
             until = int((next - curr) / 2) + curr
-            rand = randint(start, until) + (int(delta.total_seconds()) * 1000)
+            rand = secrets.SystemRandom().randint(start, until) + (int(delta.total_seconds()) * 1000)
             self.interned_datetimes[dt] = datetime.fromtimestamp(rand / 1000.0, tz=timezone.utc)
 
     def map_datetime(self, old: datetime) -> datetime:
