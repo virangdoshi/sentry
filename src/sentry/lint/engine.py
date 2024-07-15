@@ -264,7 +264,7 @@ def run_formatter(cmd, file_list, prompt_on_changes=True):
         if prompt_on_changes:
             with open("/dev/tty") as fp:
                 sys.stdout.write("\033[1m" + "Stage this patch and continue? [Y/n] " + "\033[0m\n")
-                if fp.readline().strip() not in ("Y", "y", ""):
+                if fp.readline(5_000_000).strip() not in ("Y", "y", ""):
                     sys.stderr.write("[sentry.lint] Unstaged changes have not been staged.\n")
                     if not os.environ.get("SENTRY_SKIP_FORCE_PATCH"):
                         sys.stderr.write("[sentry.lint] Aborted!\n")
