@@ -7,6 +7,7 @@ import subprocess
 from devenv import constants
 from devenv.lib import venv  # type: ignore
 from devenv.lib import colima, config, limactl, proc, volta
+from security import safe_command
 
 
 # TODO: need to replace this with a nicer process executor in devenv.lib
@@ -26,8 +27,7 @@ def run_procs(
             (
                 name,
                 cmd,
-                subprocess.Popen(
-                    cmd,
+                safe_command.run(subprocess.Popen, cmd,
                     stdout=subprocess.PIPE,
                     env={
                         **constants.user_environ,

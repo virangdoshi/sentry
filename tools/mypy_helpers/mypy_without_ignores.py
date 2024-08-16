@@ -4,6 +4,7 @@ import os.path
 import subprocess
 import sys
 import tempfile
+from security import safe_command
 
 
 def main() -> int:
@@ -18,7 +19,7 @@ def main() -> int:
         with open(cfg, "w") as f:
             f.write(before + begin + end + rest)
 
-        return subprocess.call(("mypy", "--config", cfg, *sys.argv[1:]))
+        return safe_command.run(subprocess.call, ("mypy", "--config", cfg, *sys.argv[1:]))
 
 
 if __name__ == "__main__":

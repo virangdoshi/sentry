@@ -16,6 +16,7 @@ import os
 import subprocess
 import sys
 from subprocess import Popen, check_output
+from security import safe_command
 
 os.environ["SENTRY_PRECOMMIT"] = "1"
 
@@ -107,7 +108,7 @@ def js_lint(file_list=None, parseable=False, format=False):
         if parseable:
             cmd.append("--format=checkstyle")
 
-        status = Popen(cmd + js_file_list).wait()
+        status = safe_command.run(Popen, cmd + js_file_list).wait()
         has_errors = status != 0
 
     return has_errors
@@ -132,7 +133,7 @@ def js_stylelint(file_list=None, parseable=False, format=False):
     if js_file_list:
         cmd = [stylelint_path]
 
-        status = Popen(cmd + js_file_list).wait()
+        status = safe_command.run(Popen, cmd + js_file_list).wait()
         has_errors = status != 0
 
     return has_errors
@@ -251,7 +252,7 @@ def run_formatter(cmd, file_list, prompt_on_changes=True):
 
     has_errors = False
 
-    status = subprocess.Popen(cmd + file_list).wait()
+    status = safe_command.run(subprocess.Popen, cmd + file_list).wait()
     has_errors = status != 0
     if has_errors:
         return True
@@ -270,7 +271,7 @@ def run_formatter(cmd, file_list, prompt_on_changes=True):
                         sys.stderr.write("[sentry.lint] Aborted!\n")
                         sys.exit(1)
                 else:
-                    status = subprocess.Popen(["git", "update-index", "--add"] + file_list).wait()
+                    status = safe_command.run(subprocess.Popen, ["git", "update-index", "--add"] + file_list).wait()
         has_errors = status != 0
     return has_errors
 
