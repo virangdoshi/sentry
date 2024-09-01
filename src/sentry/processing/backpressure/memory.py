@@ -3,8 +3,8 @@ from dataclasses import dataclass
 from typing import Any, Union
 
 import rb
-import requests
 from rediscluster import RedisCluster
+from security import safe_requests
 
 
 @dataclass
@@ -30,7 +30,7 @@ def query_rabbitmq_memory_usage(host: str) -> ServiceMemory:
         host += "/"
     url = f"{host}api/nodes"
 
-    response = requests.get(url, timeout=3)
+    response = safe_requests.get(url, timeout=3)
     response.raise_for_status()
     json = response.json()
     return ServiceMemory(host, json[0]["mem_used"], json[0]["mem_limit"])

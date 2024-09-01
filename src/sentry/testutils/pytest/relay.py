@@ -9,10 +9,10 @@ from os import environ, path
 from urllib.parse import urlparse
 
 import pytest
-import requests
 
 from sentry.runner.commands.devservices import get_docker_client
 from sentry.testutils.pytest.sentry import TEST_REDIS_DB
+from security import safe_requests
 
 _log = logging.getLogger(__name__)
 
@@ -135,7 +135,7 @@ def relay_server(relay_server_setup, settings):
 
     for i in range(8):
         try:
-            requests.get(url)
+            safe_requests.get(url)
             break
         except Exception as ex:
             if i == 7:

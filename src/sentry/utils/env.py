@@ -6,6 +6,7 @@ from django.conf import settings
 from google.auth import default
 
 from sentry.utils import json
+from security import safe_requests
 
 
 def in_test_environment() -> bool:
@@ -19,7 +20,7 @@ def gcp_project_id() -> str:
     # Try the metadata endpoint, if possible. If not, we'll assume a local environment as use the
     # app credentials env variable instead.
     try:
-        return requests.get(
+        return safe_requests.get(
             "http://metadata.google.internal/computeMetadata/v1/project/project-id",
             headers={
                 "Metadata-Flavor": "Google",
@@ -78,7 +79,7 @@ def log_gcp_credentials_details(logger) -> None:
     # Checking The attached service account, returned by the metadata server
     try:
         # this will only work inside a GCP machine
-        service_accounts = requests.get(
+        service_accounts = safe_requests.get(
             "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/",
             headers={
                 "Metadata-Flavor": "Google",

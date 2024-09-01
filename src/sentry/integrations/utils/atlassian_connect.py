@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import hashlib
 from collections.abc import Mapping, Sequence
-
-import requests
 from django.http import HttpRequest
 from jwt import ExpiredSignatureError, InvalidSignatureError
 from rest_framework.request import Request
@@ -14,6 +12,7 @@ from sentry.services.hybrid_cloud.integration.service import integration_service
 from sentry.services.hybrid_cloud.util import control_silo_function
 from sentry.utils import jwt
 from sentry.utils.http import absolute_uri, percent_encode
+from security import safe_requests
 
 
 class AtlassianConnectValidationError(Exception):
@@ -124,7 +123,7 @@ def authenticate_asymmetric_jwt(token: str | None, key_id: str) -> dict[str, str
     if token is None:
         raise AtlassianConnectValidationError("No token parameter")
     headers = jwt.peek_header(token)
-    key_response = requests.get(f"https://connect-install-keys.atlassian.com/{key_id}")
+    key_response = safe_requests.get(f"https://connect-install-keys.atlassian.com/{key_id}")
     public_key = key_response.content.decode("utf-8").strip()
     decoded_claims = jwt.decode(
         token, public_key, audience=absolute_uri(), algorithms=[headers.get("alg")]

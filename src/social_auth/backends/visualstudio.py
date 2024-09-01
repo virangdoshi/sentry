@@ -3,14 +3,13 @@ Obtain
 VISUALSTUDIO_CLIENT_ID & VISUALSTUDIO_CLIENT_SECRET
 and put into sentry.conf.py
 """
-
-import requests
 from django.conf import settings
 from django.urls import reverse
 
 from sentry.utils.http import absolute_uri
 from social_auth.backends import BaseOAuth2, OAuthBackend
 from social_auth.utils import setting
+from security import safe_requests
 
 VISUALSTUDIO_AUTHORIZATION_URL = "https://app.vssps.visualstudio.com/oauth2/authorize"
 VISUALSTUDIO_TOKEN_EXCHANGE_URL = "https://app.vssps.visualstudio.com/oauth2/token"
@@ -49,7 +48,7 @@ class VisualStudioAuth(BaseOAuth2):
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service"""
-        resp = requests.get(
+        resp = safe_requests.get(
             VISUALSTUDIO_USER_DETAILS_URL,
             headers={"Authorization": f"Bearer {access_token}"},
         )

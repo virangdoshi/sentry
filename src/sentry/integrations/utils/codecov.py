@@ -14,6 +14,7 @@ from sentry.integrations.utils.stacktrace_link import RepositoryLinkOutcome
 from sentry.models.organization import Organization
 from sentry.models.repository import Repository
 from sentry.services.hybrid_cloud.integration import integration_service
+from security import safe_requests
 
 LineCoverage = Sequence[tuple[int, int]]
 CODECOV_REPORT_URL = (
@@ -65,7 +66,7 @@ def has_codecov_integration(organization: Organization) -> tuple[bool, str | Non
 
         owner_username, _ = repos[0].get("full_name").split("/")
         url = CODECOV_REPOS_URL.format(service="github", owner_username=owner_username)
-        response = requests.get(url)
+        response = safe_requests.get(url)
         if response.status_code == 200:
             logger.info(
                 "codecov.check_integration_success",
@@ -103,7 +104,7 @@ def get_codecov_data(repo: str, service: str, path: str) -> tuple[LineCoverage |
 
     line_coverage, codecov_url = None, None
     with configure_scope() as scope:
-        response = requests.get(
+        response = safe_requests.get(
             url,
             params={"walk_back": 10},
             headers={"Authorization": f"Bearer {codecov_token}"},

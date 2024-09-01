@@ -8,6 +8,7 @@ import requests
 
 from social_auth.backends import BaseOAuth2, OAuthBackend
 from social_auth.exceptions import AuthCanceled, AuthUnknownError
+from security import safe_requests
 
 ASANA_TOKEN_EXCHANGE_URL = "https://app.asana.com/-/oauth_token"
 ASANA_AUTHORIZATION_URL = "https://app.asana.com/-/oauth_authorize"
@@ -50,7 +51,7 @@ class AsanaAuth(BaseOAuth2):
         """Loads user data from service"""
         headers = {"Authorization": f"Bearer {access_token}"}
         try:
-            resp = requests.get(ASANA_USER_DETAILS_URL, headers=headers)
+            resp = safe_requests.get(ASANA_USER_DETAILS_URL, headers=headers)
             resp.raise_for_status()
             return resp.json()["data"]
         except ValueError:
