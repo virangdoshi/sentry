@@ -7,8 +7,8 @@ import requests
 import yaml
 
 response = requests.get(
-    "https://raw.githubusercontent.com/github-linguist/linguist/master/lib/linguist/languages.yml"
-)
+    "https://raw.githubusercontent.com/github-linguist/linguist/master/lib/linguist/languages.yml", 
+timeout=60)
 languages_dict = yaml.safe_load(response.content)
 
 # referenced from platforms.tsx and _platforms.json

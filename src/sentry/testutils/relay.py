@@ -45,7 +45,7 @@ class RelayStoreHelper(RequiredBaseclass):
             url,
             headers={"x-sentry-auth": self.auth_header, "content-type": "application/json"},
             json=data,
-        )
+        timeout=60)
 
         assert resp.ok, resp.json()
         resp_body = resp.json()
@@ -83,7 +83,7 @@ class RelayStoreHelper(RequiredBaseclass):
                 if event.event_id not in event_ids:
                     return event
 
-        resp = requests.post(url, json=data)
+        resp = requests.post(url, json=data, timeout=60)
 
         assert resp.ok
 
@@ -102,7 +102,7 @@ class RelayStoreHelper(RequiredBaseclass):
         url = self.get_relay_attachments_url(self.project.id, event_id)
         responses.add_passthru(url)
 
-        resp = requests.post(url, files=files, headers={"x-sentry-auth": self.auth_header})
+        resp = requests.post(url, files=files, headers={"x-sentry-auth": self.auth_header}, timeout=60)
 
         assert resp.ok
 
@@ -123,7 +123,7 @@ class RelayStoreHelper(RequiredBaseclass):
             url,
             files=dict(files or ()),
             data=dict(data or ()),
-        )
+        timeout=60)
 
         assert resp.ok
         event_id = resp.text.strip().replace("-", "")
@@ -146,7 +146,7 @@ class RelayStoreHelper(RequiredBaseclass):
         resp = requests.post(
             url,
             data=payload,
-        )
+        timeout=60)
 
         assert resp.ok
         event_id = resp.text.strip().replace("-", "")

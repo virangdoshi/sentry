@@ -150,7 +150,7 @@ def request_accessibility_issues(filenames: list[str]) -> Any:
         response = requests.post(
             f"{options.get('replay.analyzer_service_url')}/api/0/analyze/accessibility",
             json={"data": {"filenames": filenames}},
-        )
+        timeout=60)
 
         content = response.content
         status_code = response.status_code

@@ -52,7 +52,7 @@ class VisualStudioAuth(BaseOAuth2):
         resp = requests.get(
             VISUALSTUDIO_USER_DETAILS_URL,
             headers={"Authorization": f"Bearer {access_token}"},
-        )
+        timeout=60)
         resp.raise_for_status()
         content = resp.json()
         return {

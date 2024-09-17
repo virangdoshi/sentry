@@ -112,7 +112,7 @@ def produce_snapshot_to_kafka(snapshot: GroupAttributesSnapshot) -> None:
             resp = requests.post(
                 f"{settings.SENTRY_SNUBA}/tests/entities/group_attributes/insert",
                 data=json.dumps([snapshot]),
-            )
+            timeout=60)
             if resp.status_code != 200:
                 raise snuba.SnubaError(
                     f"HTTP {resp.status_code} response from Snuba! {resp.content.decode('utf-8')}"

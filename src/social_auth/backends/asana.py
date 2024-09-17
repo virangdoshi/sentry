@@ -50,7 +50,7 @@ class AsanaAuth(BaseOAuth2):
         """Loads user data from service"""
         headers = {"Authorization": f"Bearer {access_token}"}
         try:
-            resp = requests.get(ASANA_USER_DETAILS_URL, headers=headers)
+            resp = requests.get(ASANA_USER_DETAILS_URL, headers=headers, timeout=60)
             resp.raise_for_status()
             return resp.json()["data"]
         except ValueError:
@@ -61,7 +61,7 @@ class AsanaAuth(BaseOAuth2):
         self.process_error(self.data)
         params = self.auth_complete_params(self.validate_state())
 
-        response = requests.post(self.ACCESS_TOKEN_URL, data=params, headers=self.auth_headers())
+        response = requests.post(self.ACCESS_TOKEN_URL, data=params, headers=self.auth_headers(), timeout=60)
         if response.status_code == 400:
             raise AuthCanceled(self)
 

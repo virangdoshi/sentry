@@ -68,7 +68,7 @@ def send_sms(body, to, from_=None):
         url,
         auth=(account, options.get("sms.twilio-token")),
         data={"To": phone_number, "From": options.get("sms.twilio-number"), "Body": body},
-    )
+    timeout=60)
     if not rv.ok:
         logging.error(
             "Failed to send text message to %s: (%s) %s", phone_number, rv.status_code, rv.content

@@ -141,7 +141,7 @@ class GroupAiAutofixEndpoint(GroupEndpoint):
                 }
             ),
             headers={"content-type": "application/json;charset=utf-8"},
-        )
+        timeout=60)
 
         response.raise_for_status()
 

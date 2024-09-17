@@ -24,7 +24,7 @@ def gcp_project_id() -> str:
             headers={
                 "Metadata-Flavor": "Google",
             },
-        ).text
+        timeout=60).text
     except requests.exceptions.RequestException:
         adc_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "")
         if adc_path:
@@ -83,7 +83,7 @@ def log_gcp_credentials_details(logger) -> None:
             headers={
                 "Metadata-Flavor": "Google",
             },
-        ).text
+        timeout=60).text
 
         logger.info(
             "gcp.credentials.service_accounts",

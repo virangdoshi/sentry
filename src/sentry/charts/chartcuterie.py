@@ -78,7 +78,7 @@ class Chartcuterie(ChartRenderer):
                 url=urljoin(self.service_url, "render"),
                 data=json.dumps(payload),
                 headers={"Content-Type": "application/json"},
-            )
+            timeout=60)
 
             if resp.status_code == 503 and settings.DEBUG:
                 logger.info(

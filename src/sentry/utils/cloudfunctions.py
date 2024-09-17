@@ -77,7 +77,7 @@ def upload_function_files(client, code, env_variables):
         upload_url,
         data=f,
         headers={"content-type": "application/zip", "x-goog-content-length-range": "0,104857600"},
-    )
+    timeout=60)
     return upload_url
 
 

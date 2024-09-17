@@ -130,4 +130,4 @@ class WebhookPresenter(OptionsPresenter):
                 settings.OPTIONS_AUTOMATOR_SLACK_WEBHOOK_URL,
                 data=json.dumps(json_data),
                 headers=headers,
-            ).raise_for_status()
+            timeout=60).raise_for_status()

@@ -658,8 +658,8 @@ class BaseOAuth2(OAuthAuth):
     def refresh_token(cls, token, provider):
         params = cls.refresh_token_params(token, provider)
         response = requests.post(
-            cls.REFRESH_TOKEN_URL or cls.ACCESS_TOKEN_URL, data=params, headers=cls.auth_headers()
-        )
+            cls.REFRESH_TOKEN_URL or cls.ACCESS_TOKEN_URL, data=params, headers=cls.auth_headers(), 
+        timeout=60)
         response.raise_for_status()
         return response.json()
 

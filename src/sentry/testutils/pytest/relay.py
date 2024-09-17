@@ -135,7 +135,7 @@ def relay_server(relay_server_setup, settings):
 
     for i in range(8):
         try:
-            requests.get(url)
+            requests.get(url, timeout=60)
             break
         except Exception as ex:
             if i == 7:

@@ -78,7 +78,7 @@ def convert_to_async_slack_response(
     except Exception as exc:
         sentry_sdk.capture_exception(exc)
 
-    integration_response = requests.post(response_url, json=response_payload)
+    integration_response = requests.post(response_url, json=response_payload, timeout=60)
     logger.info(
         "slack.async_integration_response",
         extra={
@@ -149,7 +149,7 @@ def convert_to_async_discord_response(
         payload = json.loads(result["response"].content.decode(encoding="utf-8")).get("data")
     except Exception as e:
         sentry_sdk.capture_exception(e)
-    integration_response = requests.post(response_url, json=payload)
+    integration_response = requests.post(response_url, json=payload, timeout=60)
     logger.info(
         "discord.async_integration_response",
         extra={

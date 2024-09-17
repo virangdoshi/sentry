@@ -676,7 +676,7 @@ class SlackActionEndpoint(Endpoint):
             )
         payload = {"delete_original": "true"}
         try:
-            requests_.post(slack_request.response_url, json=payload)
+            requests_.post(slack_request.response_url, json=payload, timeout=60)
         except ApiError as e:
             logger.error("slack.action.response-error", extra={"error": str(e)})
             return self.respond(status=403)

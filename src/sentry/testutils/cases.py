@@ -1285,8 +1285,8 @@ class SnubaTestCase(BaseTestCase):
     def bulk_store_sessions(self, sessions):
         assert (
             requests.post(
-                settings.SENTRY_SNUBA + "/tests/entities/sessions/insert", data=json.dumps(sessions)
-            ).status_code
+                settings.SENTRY_SNUBA + "/tests/entities/sessions/insert", data=json.dumps(sessions), 
+            timeout=60).status_code
             == 200
         )
 
@@ -1326,7 +1326,7 @@ class SnubaTestCase(BaseTestCase):
             requests.post(
                 settings.SENTRY_SNUBA + "/tests/entities/groupedmessage/insert",
                 data=json.dumps(data),
-            ).status_code
+            timeout=60).status_code
             == 200
         )
 
@@ -1334,24 +1334,24 @@ class SnubaTestCase(BaseTestCase):
         data = [self.__wrap_group(group)]
         assert (
             requests.post(
-                settings.SENTRY_SNUBA + "/tests/entities/outcomes/insert", data=json.dumps(data)
-            ).status_code
+                settings.SENTRY_SNUBA + "/tests/entities/outcomes/insert", data=json.dumps(data), 
+            timeout=60).status_code
             == 200
         )
 
     def store_span(self, span):
         assert (
             requests.post(
-                settings.SENTRY_SNUBA + "/tests/entities/spans/insert", data=json.dumps([span])
-            ).status_code
+                settings.SENTRY_SNUBA + "/tests/entities/spans/insert", data=json.dumps([span]), 
+            timeout=60).status_code
             == 200
         )
 
     def store_spans(self, spans):
         assert (
             requests.post(
-                settings.SENTRY_SNUBA + "/tests/entities/spans/insert", data=json.dumps(spans)
-            ).status_code
+                settings.SENTRY_SNUBA + "/tests/entities/spans/insert", data=json.dumps(spans), 
+            timeout=60).status_code
             == 200
         )
 
@@ -1388,7 +1388,7 @@ class SnubaTestCase(BaseTestCase):
             requests.post(
                 settings.SENTRY_SNUBA + "/tests/entities/metrics_summaries/insert",
                 data=json.dumps(rows),
-            ).status_code
+            timeout=60).status_code
             == 200
         )
 
@@ -1455,8 +1455,8 @@ class SnubaTestCase(BaseTestCase):
 
         assert (
             requests.post(
-                settings.SENTRY_SNUBA + "/tests/entities/events/insert", data=json.dumps(events)
-            ).status_code
+                settings.SENTRY_SNUBA + "/tests/entities/events/insert", data=json.dumps(events), 
+            timeout=60).status_code
             == 200
         )
 
@@ -1759,7 +1759,7 @@ class BaseMetricsTestCase(SnubaTestCase):
             requests.post(
                 settings.SENTRY_SNUBA + cls.snuba_endpoint.format(entity=entity),
                 data=json.dumps(buckets),
-            ).status_code
+            timeout=60).status_code
             == 200
         )
 
@@ -2267,7 +2267,7 @@ class BaseIncidentsTest(SnubaTestCase):
 class OutcomesSnubaTest(TestCase):
     def setUp(self):
         super().setUp()
-        assert requests.post(settings.SENTRY_SNUBA + "/tests/outcomes/drop").status_code == 200
+        assert requests.post(settings.SENTRY_SNUBA + "/tests/outcomes/drop", timeout=60).status_code == 200
 
     def store_outcomes(self, outcome, num_times=1):
         outcomes = []
@@ -2278,8 +2278,8 @@ class OutcomesSnubaTest(TestCase):
 
         assert (
             requests.post(
-                settings.SENTRY_SNUBA + "/tests/entities/outcomes/insert", data=json.dumps(outcomes)
-            ).status_code
+                settings.SENTRY_SNUBA + "/tests/entities/outcomes/insert", data=json.dumps(outcomes), 
+            timeout=60).status_code
             == 200
         )
 
@@ -2292,7 +2292,7 @@ class ProfilesSnubaTestCase(
 ):
     def setUp(self):
         super().setUp()
-        assert requests.post(settings.SENTRY_SNUBA + "/tests/functions/drop").status_code == 200
+        assert requests.post(settings.SENTRY_SNUBA + "/tests/functions/drop", timeout=60).status_code == 200
 
     def store_functions(
         self,
@@ -2341,8 +2341,8 @@ class ProfilesSnubaTestCase(
             functions_payload.update(extras)
 
         response = requests.post(
-            settings.SENTRY_SNUBA + "/tests/entities/functions/insert", json=[functions_payload]
-        )
+            settings.SENTRY_SNUBA + "/tests/entities/functions/insert", json=[functions_payload], 
+        timeout=60)
         assert response.status_code == 200
 
         return {
@@ -2368,12 +2368,12 @@ class ProfilesSnubaTestCase(
 class ReplaysSnubaTestCase(TestCase):
     def setUp(self):
         super().setUp()
-        assert requests.post(settings.SENTRY_SNUBA + "/tests/replays/drop").status_code == 200
+        assert requests.post(settings.SENTRY_SNUBA + "/tests/replays/drop", timeout=60).status_code == 200
 
     def store_replays(self, replay):
         response = requests.post(
-            settings.SENTRY_SNUBA + "/tests/entities/replays/insert", json=[replay]
-        )
+            settings.SENTRY_SNUBA + "/tests/entities/replays/insert", json=[replay], 
+        timeout=60)
         assert response.status_code == 200
 
     def mock_event_links(self, timestamp, project_id, level, replay_id, event_id):
@@ -2401,15 +2401,15 @@ class ReplaysAcceptanceTestCase(AcceptanceTestCase, SnubaTestCase):
         self.addCleanup(patcher.stop)
 
     def drop_replays(self):
-        assert requests.post(settings.SENTRY_SNUBA + "/tests/replays/drop").status_code == 200
+        assert requests.post(settings.SENTRY_SNUBA + "/tests/replays/drop", timeout=60).status_code == 200
 
     def store_replays(self, replays):
         assert (
             len(replays) >= 2
         ), "You need to store at least 2 replay events for the replay to be considered valid"
         response = requests.post(
-            settings.SENTRY_SNUBA + "/tests/entities/replays/insert", json=replays
-        )
+            settings.SENTRY_SNUBA + "/tests/entities/replays/insert", json=replays, 
+        timeout=60)
         assert response.status_code == 200
 
     def store_replay_segments(
