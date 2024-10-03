@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import hashlib
-import random
 
 from sentry import options
+import secrets
 
 
 def in_random_rollout(option_name: str) -> bool:
@@ -11,7 +11,7 @@ def in_random_rollout(option_name: str) -> bool:
     Determine if the current operation is in a random % based rollout
     group governed by an option with `option_name`.
     """
-    return random.random() < options.get(option_name)
+    return secrets.SystemRandom().random() < options.get(option_name)
 
 
 def in_rollout_group(option_name: str, key: int | str) -> bool:

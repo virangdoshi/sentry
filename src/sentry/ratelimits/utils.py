@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import random
 import string
 from collections.abc import Callable, Mapping
 from typing import TYPE_CHECKING, Any
@@ -19,6 +18,7 @@ from sentry.types.ratelimit import RateLimit, RateLimitCategory, RateLimitMeta, 
 from sentry.utils.hashlib import md5_text
 
 from . import backend as ratelimiter
+import secrets
 
 logger = logging.getLogger("sentry.api.rate-limit")
 
@@ -140,7 +140,7 @@ def get_organization_id_from_token(token_id: int) -> Any:
     # associated with a SentryAppInstallation. This is a temporary fix while we solve the root cause
     if not installation:
         logger.info("installation.not_found", extra={"token_id": token_id})
-        return random.choice(string.ascii_letters)
+        return secrets.choice(string.ascii_letters)
 
     return installation.organization_id
 

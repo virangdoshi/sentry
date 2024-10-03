@@ -1,6 +1,5 @@
 import dataclasses
 import logging
-import random
 from collections.abc import Mapping
 from typing import Any
 
@@ -18,6 +17,7 @@ from sentry_sdk.tracing import Span
 
 from sentry.replays.usecases.ingest import ingest_recording
 from sentry.utils.arroyo import MultiprocessingPool, RunTaskWithMultiprocessing
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -107,7 +107,7 @@ def initialize_threaded_context(message: Message[KafkaPayload]) -> MessageContex
     transaction = sentry_sdk.start_transaction(
         name="replays.consumer.process_recording",
         op="replays.consumer",
-        sampled=random.random()
+        sampled=secrets.SystemRandom().random()
         < getattr(settings, "SENTRY_REPLAY_RECORDINGS_CONSUMER_APM_SAMPLING", 0),
     )
     current_hub = sentry_sdk.Hub(sentry_sdk.Hub.current)
@@ -133,7 +133,7 @@ def process_message(message: Message[KafkaPayload]) -> Any:
     transaction = sentry_sdk.start_transaction(
         name="replays.consumer.process_recording",
         op="replays.consumer",
-        sampled=random.random()
+        sampled=secrets.SystemRandom().random()
         < getattr(settings, "SENTRY_REPLAY_RECORDINGS_CONSUMER_APM_SAMPLING", 0),
     )
     current_hub = sentry_sdk.Hub(sentry_sdk.Hub.current)

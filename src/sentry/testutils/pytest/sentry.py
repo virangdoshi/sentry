@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import collections
 import os
-import random
 import shutil
 import string
 import sys
@@ -22,6 +21,7 @@ from sentry.testutils.silo import monkey_patch_single_process_silo_mode_state
 from sentry.types import region
 from sentry.types.region import Region, RegionCategory
 from sentry.utils.warnings import UnsupportedBackend
+import secrets
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -63,7 +63,7 @@ def _configure_test_env_regions() -> None:
     # Assign a random name on every test run, as a reminder that test setup and
     # assertions should not depend on this value. If you need to test behavior that
     # depends on region attributes, use `override_regions` in your test case.
-    region_name = "testregion" + "".join(random.choices(string.digits, k=6))
+    region_name = "testregion" + "".join(secrets.SystemRandom().choices(string.digits, k=6))
 
     default_region = Region(
         region_name, 0, settings.SENTRY_OPTIONS["system.url-prefix"], RegionCategory.MULTI_TENANT
@@ -376,7 +376,7 @@ def _shuffle(items: list[pytest.Item]) -> None:
             raise AssertionError(f"unexpected nodeid: {item.nodeid}")
 
     def _shuffle_d(dct: dict[K, V]) -> dict[K, V]:
-        return dict(random.sample(tuple(dct.items()), len(dct)))
+        return dict(secrets.SystemRandom().sample(tuple(dct.items()), len(dct)))
 
     new_items = []
     for first_v in _shuffle_d(nodes).values():

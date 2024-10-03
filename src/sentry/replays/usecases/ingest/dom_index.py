@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import random
 import time
 import uuid
 from collections.abc import Generator
@@ -19,6 +18,7 @@ from sentry.replays.usecases.ingest.issue_creation import (
 )
 from sentry.utils import json, kafka_config, metrics
 from sentry.utils.pubsub import KafkaPublisher
+import secrets
 
 logger = logging.getLogger("sentry.replays")
 
@@ -190,7 +190,7 @@ def get_user_actions(
         if tag == "performanceSpan":
             _handle_resource_metric_event(event)
         # log the SDK options sent from the SDK 1/500 times
-        if tag == "options" and random.randint(0, 499) < 1:
+        if tag == "options" and secrets.SystemRandom().randint(0, 499) < 1:
             _handle_options_logging_event(project_id, replay_id, event)
         # log large dom mutation breadcrumb events 1/100 times
 
@@ -199,7 +199,7 @@ def get_user_actions(
             isinstance(payload, dict)
             and tag == "breadcrumb"
             and payload.get("category") == "replay.mutations"
-            and random.randint(0, 99) < 1
+            and secrets.SystemRandom().randint(0, 99) < 1
         ):
             _handle_mutations_event(project_id, replay_id, event)
 
@@ -345,7 +345,7 @@ def _handle_resource_metric_event(event: dict[str, Any]) -> None:
 
 def _handle_options_logging_event(project_id: int, replay_id: str, event: dict[str, Any]) -> None:
     # log the SDK options sent from the SDK 1/500 times
-    if random.randint(0, 499) < 1:
+    if secrets.SystemRandom().randint(0, 499) < 1:
         log = event["data"].get("payload", {}).copy()
         log["project_id"] = project_id
         log["replay_id"] = replay_id
@@ -355,7 +355,7 @@ def _handle_options_logging_event(project_id: int, replay_id: str, event: dict[s
 def _handle_mutations_event(project_id: int, replay_id: str, event: dict[str, Any]) -> None:
     if (
         event.get("data", {}).get("payload", {}).get("category") == "replay.mutations"
-        and random.randint(0, 99) < 1
+        and secrets.SystemRandom().randint(0, 99) < 1
     ):
         log = event["data"].get("payload", {}).copy()
         log["project_id"] = project_id

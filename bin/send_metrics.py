@@ -5,7 +5,6 @@ import datetime
 import itertools
 import json
 import pprint
-import random
 import string
 
 import click
@@ -13,6 +12,7 @@ from arroyo.backends.kafka import KafkaPayload, KafkaProducer
 from arroyo.types import Topic
 
 from sentry.sentry_metrics.use_case_id_registry import UseCaseID
+import secrets
 
 make_counter_payload = lambda use_case, org_id, rand_str: {
     "name": f"c:{use_case}/{use_case}@none",
@@ -38,7 +38,7 @@ make_dist_payload = lambda use_case, org_id, rand_str, value_len: {
     },
     "timestamp": int(datetime.datetime.now(tz=datetime.UTC).timestamp()),
     "type": "d",
-    "value": {"format": "array", "data": [random.random() for _ in range(value_len)]},
+    "value": {"format": "array", "data": [secrets.SystemRandom().random() for _ in range(value_len)]},
     "org_id": org_id,
     "retention_days": 90,
     "project_id": 3,
@@ -53,7 +53,7 @@ make_set_payload = lambda use_case, org_id, rand_str, value_len: {
     },
     "timestamp": int(datetime.datetime.now(tz=datetime.UTC).timestamp()),
     "type": "s",
-    "value": {"format": "array", "data": [random.randint(0, 2048) for _ in range(value_len)]},
+    "value": {"format": "array", "data": [secrets.SystemRandom().randint(0, 2048) for _ in range(value_len)]},
     "org_id": org_id,
     "retention_days": 90,
     "project_id": 3,
@@ -208,7 +208,7 @@ def main(
         )
         exit(1)
 
-    rand_str = rand_str or "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
+    rand_str = rand_str or "".join(secrets.SystemRandom().choices(string.ascii_uppercase + string.digits, k=8))
 
     is_generic = UseCaseID.SESSIONS.value not in use_cases
 
@@ -227,7 +227,7 @@ def main(
 
     messages.extend([{"BAD_VALUE": rand_str, "idx": i} for i in range(num_bad_msg)])
 
-    random.shuffle(messages)
+    secrets.SystemRandom().shuffle(messages)
 
     produce_msgs(messages, is_generic, host, dryrun, quiet)
 

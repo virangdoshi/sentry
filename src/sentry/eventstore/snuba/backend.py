@@ -1,5 +1,4 @@
 import logging
-import random
 from collections.abc import Mapping, Sequence
 from copy import copy, deepcopy
 from datetime import datetime, timedelta
@@ -29,6 +28,7 @@ from sentry.snuba.events import Columns
 from sentry.utils import snuba
 from sentry.utils.snuba import DATASETS, _prepare_start_end, raw_snql_query
 from sentry.utils.validators import normalize_event_id
+import secrets
 
 EVENT_ID = Columns.EVENT_ID.value.alias
 PROJECT_ID = Columns.PROJECT_ID.value.alias
@@ -349,7 +349,7 @@ class SnubaEventStorage(EventStorage):
                 # we cache an empty result, since this can result in us failing to fetch new events
                 # in some cases.
                 raw_query_kwargs["conditions"] = [
-                    ["timestamp", ">", datetime.fromtimestamp(random.randint(0, 1000000000))]
+                    ["timestamp", ">", datetime.fromtimestamp(secrets.SystemRandom().randint(0, 1000000000))]
                 ]
             dataset = (
                 Dataset.IssuePlatform

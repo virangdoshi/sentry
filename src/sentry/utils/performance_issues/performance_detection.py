@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import hashlib
 import logging
-import random
 from collections.abc import Sequence
 from typing import Any
 
@@ -35,6 +34,7 @@ from .detectors.render_blocking_asset_span_detector import RenderBlockingAssetSp
 from .detectors.slow_db_query_detector import SlowDBQueryDetector
 from .detectors.uncompressed_asset_detector import UncompressedAssetSpanDetector
 from .performance_problem import PerformanceProblem
+import secrets
 
 PERFORMANCE_GROUP_COUNT_LIMIT = 10
 INTEGRATIONS_OF_INTEREST = [
@@ -113,7 +113,7 @@ class EventPerformanceProblem:
 def detect_performance_problems(data: dict[str, Any], project: Project) -> list[PerformanceProblem]:
     try:
         rate = options.get("performance.issues.all.problem-detection")
-        if rate and rate > random.random():
+        if rate and rate > secrets.SystemRandom().random():
             # Add an experimental tag to be able to find these spans in production while developing. Should be removed later.
             sentry_sdk.set_tag("_did_analyze_performance_issue", "true")
             with metrics.timer(

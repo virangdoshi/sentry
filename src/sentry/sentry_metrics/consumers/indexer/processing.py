@@ -1,5 +1,4 @@
 import logging
-import random
 from collections.abc import Callable, Mapping
 from typing import Any
 
@@ -26,6 +25,7 @@ from sentry.sentry_metrics.indexer.limiters.cardinality import cardinality_limit
 from sentry.sentry_metrics.indexer.mock import MockIndexer
 from sentry.sentry_metrics.indexer.postgres.postgres_v2 import PostgresIndexer
 from sentry.utils import metrics, sdk
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +79,7 @@ class MessageProcessor:
     def process_messages(self, outer_message: Message[MessageBatch]) -> IndexerOutputMessageBatch:
         with sentry_sdk.start_transaction(
             name="sentry.sentry_metrics.consumers.indexer.processing.process_messages",
-            sampled=random.random() < settings.SENTRY_METRICS_INDEXER_TRANSACTIONS_SAMPLE_RATE,
+            sampled=secrets.SystemRandom().random() < settings.SENTRY_METRICS_INDEXER_TRANSACTIONS_SAMPLE_RATE,
         ):
             return self._process_messages_impl(outer_message)
 

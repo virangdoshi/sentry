@@ -1,5 +1,4 @@
 import logging
-import random
 from collections.abc import Generator, Mapping
 from contextlib import contextmanager
 from typing import Any
@@ -17,6 +16,7 @@ from sentry.post_process_forwarder.post_process_forwarder import PostProcessForw
 from sentry.tasks.post_process import post_process_group
 from sentry.utils import metrics
 from sentry.utils.cache import cache_key_for_event
+import secrets
 
 _DURATION_METRIC = "eventstream.duration"
 
@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 @contextmanager
 def _sampled_eventstream_timer(instance: str) -> Generator[None, None, None]:
-    record_metric = random.random() < 0.1
+    record_metric = secrets.SystemRandom().random() < 0.1
     if record_metric is True:
         with metrics.timer(_DURATION_METRIC, instance=instance):
             yield

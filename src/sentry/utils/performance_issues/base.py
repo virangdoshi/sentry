@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import hashlib
-import random
 import re
 from abc import ABC, abstractmethod
 from datetime import timedelta
@@ -28,6 +27,7 @@ from sentry.models.organization import Organization
 from sentry.models.project import Project
 
 from .types import PerformanceProblemsMap, Span
+import secrets
 
 
 class DetectorType(Enum):
@@ -145,7 +145,7 @@ class PerformanceDetector(ABC):
             elif isinstance(
                 creation_option_value, float
             ):  # If the option is a float, we are controlling it with a rate. TODO - make all detectors use boolean
-                return creation_option_value > random.random()
+                return creation_option_value > secrets.SystemRandom().random()
             return False
 
         except options.UnknownOption:

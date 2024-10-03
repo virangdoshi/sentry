@@ -1,7 +1,6 @@
 import importlib.resources
 import itertools
 import logging
-import random
 import uuid
 from collections import defaultdict, namedtuple
 from collections.abc import Callable, Iterable
@@ -24,6 +23,7 @@ from sentry.utils.redis import (
     is_instance_rb_cluster,
 )
 from sentry.utils.versioning import Version
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -633,7 +633,7 @@ class RedisTSDB(BaseTSDB):
             # here that we've already accessed as part of this process -- this
             # way, we constrain the choices to only hosts that we know are
             # running.)
-            client = cluster.get_local_client(random.choice(values)[0])
+            client = cluster.get_local_client(secrets.choice(values)[0])
             with client.pipeline(transaction=False) as pipeline:
                 pipeline.mset(aggregates)
                 pipeline.execute_command("PFMERGE", destination, *aggregates.keys())

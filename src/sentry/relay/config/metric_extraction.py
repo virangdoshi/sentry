@@ -1,5 +1,4 @@
 import logging
-import random
 from collections import defaultdict
 from collections.abc import Sequence
 from dataclasses import dataclass
@@ -46,6 +45,7 @@ from sentry.snuba.models import SnubaQuery
 from sentry.snuba.referrer import Referrer
 from sentry.utils import json, metrics
 from sentry.utils.cache import cache
+import secrets
 
 OnDemandExtractionState = DashboardWidgetQueryOnDemand.OnDemandExtractionState
 
@@ -569,15 +569,14 @@ def _widget_query_stateful_extraction_enabled(widget_query: DashboardWidgetQuery
 
 def _get_widget_cardinality_query_ttl() -> int:
     # Add ttl + 25% jitter to query so queries aren't all made at once.
-    return int(random.uniform(_WIDGET_QUERY_CARDINALITY_TTL, _WIDGET_QUERY_CARDINALITY_TTL * 1.5))
+    return int(secrets.SystemRandom().uniform(_WIDGET_QUERY_CARDINALITY_TTL, _WIDGET_QUERY_CARDINALITY_TTL * 1.5))
 
 
 def _get_widget_cardinality_softdeadline_ttl() -> int:
     # This is a much shorter deadline than the main cardinality TTL in the case softdeadline is hit
     # We want to query again soon, but still avoid thundering herd problems.
     return int(
-        random.uniform(
-            _WIDGET_QUERY_CARDINALITY_SOFT_DEADLINE_TTL,
+        secrets.SystemRandom().uniform(_WIDGET_QUERY_CARDINALITY_SOFT_DEADLINE_TTL,
             _WIDGET_QUERY_CARDINALITY_SOFT_DEADLINE_TTL * 1.5,
         )
     )

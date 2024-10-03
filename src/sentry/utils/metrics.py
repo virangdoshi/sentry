@@ -1,3 +1,5 @@
+import secrets
+
 __all__ = ["timing", "incr"]
 
 
@@ -7,7 +9,6 @@ import time
 from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from queue import Queue
-from random import random
 from threading import Thread
 from typing import Any, TypeVar
 
@@ -54,7 +55,7 @@ def _get_key(key: str) -> str:
 
 
 def _should_sample(sample_rate: float) -> bool:
-    return sample_rate >= 1 or random() >= 1 - sample_rate
+    return sample_rate >= 1 or secrets.SystemRandom().random() >= 1 - sample_rate
 
 
 def _sampled_value(value: int | float, sample_rate: float) -> int | float:

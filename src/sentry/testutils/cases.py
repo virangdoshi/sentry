@@ -4,7 +4,6 @@ import hashlib
 import importlib.metadata
 import inspect
 import os.path
-import random
 import re
 import time
 from collections.abc import Mapping, Sequence
@@ -155,6 +154,7 @@ from .fixtures import Fixtures
 from .helpers import AuthProvider, Feature, TaskRunner, override_options, parse_queries
 from .silo import assume_test_silo_mode
 from .skips import requires_snuba
+import secrets
 
 __all__ = (
     "TestCase",
@@ -1463,7 +1463,7 @@ class SnubaTestCase(BaseTestCase):
 
 class BaseSpansTestCase(SnubaTestCase):
     def _random_span_id(self):
-        random_number = random.randint(0, 100000000)
+        random_number = secrets.SystemRandom().randint(0, 100000000)
         return hex(random_number)[2:]
 
     def store_segment(

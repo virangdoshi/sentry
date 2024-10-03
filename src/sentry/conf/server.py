@@ -25,6 +25,7 @@ from sentry.conf.types.topic_definition import TopicDefinition
 from sentry.utils import json  # NOQA (used in getsentry config)
 from sentry.utils.celery import crontab_with_minute_jitter
 from sentry.utils.types import Type, type_from_value
+import secrets
 
 
 def gettext_noop(s: str) -> str:
@@ -637,11 +638,9 @@ AUTH_PROVIDER_LABELS = {
     "visualstudio": "Visual Studio",
 }
 
-import random
-
 
 def SOCIAL_AUTH_DEFAULT_USERNAME() -> str:
-    return random.choice(["Darth Vader", "Obi-Wan Kenobi", "R2-D2", "C-3PO", "Yoda"])
+    return secrets.choice(["Darth Vader", "Obi-Wan Kenobi", "R2-D2", "C-3PO", "Yoda"])
 
 
 SOCIAL_AUTH_PROTECTED_USER_FIELDS = ["email"]

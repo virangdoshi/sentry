@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import random
 from collections.abc import Collection, Iterable, Mapping, MutableMapping, Sequence
 from datetime import datetime, timedelta
 
@@ -22,6 +21,7 @@ from sentry.sentry_metrics.indexer.base import (
 from sentry.sentry_metrics.use_case_id_registry import UseCaseID
 from sentry.utils import metrics
 from sentry.utils.hashlib import md5_text
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +56,7 @@ class StringIndexerCache:
         # introduce jitter in the cache_ttl so that when we have large
         # amount of new keys written into the cache, they don't expire all at once
         cache_ttl = settings.SENTRY_METRICS_INDEXER_CACHE_TTL
-        jitter = random.uniform(0, 0.25) * cache_ttl
+        jitter = secrets.SystemRandom().uniform(0, 0.25) * cache_ttl
         return int(cache_ttl + jitter)
 
     def _make_cache_key(self, key: str) -> str:
@@ -285,7 +285,7 @@ class CachingIndexer(StringIndexer):
                 tags={"cache_hit": "false", "use_case": use_case_id.value},
             )
             # TODO this random rollout is backwards
-            if random.random() >= options.get(
+            if secrets.SystemRandom().random() >= options.get(
                 "sentry-metrics.indexer.disable-memcache-replenish-rollout"
             ):
                 metrics.incr(

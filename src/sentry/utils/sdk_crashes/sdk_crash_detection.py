@@ -1,6 +1,4 @@
 from __future__ import annotations
-
-import random
 from collections.abc import Mapping, Sequence
 from typing import Any
 
@@ -11,6 +9,7 @@ from sentry.utils.safe import get_path, set_path
 from sentry.utils.sdk_crashes.event_stripper import strip_event_data
 from sentry.utils.sdk_crashes.sdk_crash_detection_config import SDKCrashDetectionConfig
 from sentry.utils.sdk_crashes.sdk_crash_detector import SDKCrashDetector
+import secrets
 
 
 class SDKCrashReporter:
@@ -109,7 +108,7 @@ class SDKCrashDetection:
 
         if sdk_crash_detector.is_sdk_crash(frames):
             # TODO this rollout rate is backwards
-            if random.random() >= sample_rate:
+            if secrets.SystemRandom().random() >= sample_rate:
                 return None
 
             sdk_crash_event_data = strip_event_data(event.data, sdk_crash_detector)

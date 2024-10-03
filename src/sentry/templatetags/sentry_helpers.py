@@ -1,9 +1,7 @@
 import functools
 import os.path
-import random
 from collections import namedtuple
 from datetime import datetime, timedelta, timezone
-from random import randint
 from urllib.parse import quote, urlencode
 
 from django import template
@@ -19,6 +17,7 @@ from sentry.api.serializers import serialize as serialize_func
 from sentry.utils import json
 from sentry.utils.strings import soft_break as _soft_break
 from sentry.utils.strings import soft_hyphenate, to_unicode, truncatechars
+import secrets
 
 SentryVersion = namedtuple("SentryVersion", ["current", "latest", "update_available", "build"])
 
@@ -119,7 +118,7 @@ def loading_message():
         "Awaiting solution to the halting problem.",
         "Collapsing wavefunctions.",
     ]
-    return random.choice(options)
+    return secrets.choice(options)
 
 
 @register.simple_tag
@@ -312,7 +311,7 @@ def soft_break(value, length):
 def random_int(a, b=None):
     if b is None:
         a, b = 0, a
-    return randint(a, b)
+    return secrets.SystemRandom().randint(a, b)
 
 
 @register.filter

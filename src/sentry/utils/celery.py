@@ -1,8 +1,8 @@
-from random import randint
 
 from celery.schedules import crontab
+import secrets
 
 
 def crontab_with_minute_jitter(*args, **kwargs):
-    kwargs["minute"] = randint(0, 59)
+    kwargs["minute"] = secrets.SystemRandom().randint(0, 59)
     return crontab(*args, **kwargs)

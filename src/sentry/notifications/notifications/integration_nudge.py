@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import random
 from collections.abc import Iterable, Mapping, MutableMapping, Sequence
 from typing import TYPE_CHECKING, Any
 
@@ -11,6 +10,7 @@ from sentry.notifications.notifications.base import BaseNotification
 from sentry.notifications.utils.actions import MessageAction
 from sentry.services.hybrid_cloud.actor import RpcActor
 from sentry.types.integrations import ExternalProviders
+import secrets
 
 if TYPE_CHECKING:
     from sentry.models.organization import Organization
@@ -63,7 +63,7 @@ class IntegrationNudgeNotification(BaseNotification):
         self.seed = (
             (seed % len(MESSAGE_LIBRARY))
             if seed is not None
-            else random.randint(0, len(MESSAGE_LIBRARY) - 1)
+            else secrets.SystemRandom().randint(0, len(MESSAGE_LIBRARY) - 1)
         )
 
     @property

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 from datetime import timedelta
-from random import randrange
 
 from django.db import router
 from django.utils import timezone
@@ -18,6 +17,7 @@ from sentry.silo.base import SiloMode
 from sentry.tasks.base import instrumented_task
 from sentry.utils import metrics
 from sentry.utils.env import in_test_environment
+import secrets
 
 logger = logging.getLogger("sentry.auth")
 
@@ -35,7 +35,7 @@ def check_auth(chunk_size=100, **kwargs):
     # TODO(dcramer): we should remove identities if they've been inactivate
     # for a reasonable interval
     now = timezone.now()
-    cutoff = now - timedelta(seconds=AUTH_CHECK_INTERVAL - randrange(AUTH_CHECK_SKEW))
+    cutoff = now - timedelta(seconds=AUTH_CHECK_INTERVAL - secrets.SystemRandom().randrange(AUTH_CHECK_SKEW))
     identity_ids_list = list(
         AuthIdentity.objects.using_replica()
         .filter(last_synced__lte=cutoff)

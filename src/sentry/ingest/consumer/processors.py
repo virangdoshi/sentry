@@ -1,6 +1,5 @@
 import functools
 import logging
-import random
 from collections.abc import Mapping
 from typing import Any
 
@@ -24,6 +23,7 @@ from sentry.utils import json, metrics
 from sentry.utils.cache import cache_key_for_event
 from sentry.utils.dates import to_datetime
 from sentry.utils.snuba import RateLimitExceeded
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +36,7 @@ def trace_func(**span_kwargs):
     def wrapper(f):
         @functools.wraps(f)
         def inner(*args, **kwargs):
-            span_kwargs["sampled"] = random.random() < getattr(
+            span_kwargs["sampled"] = secrets.SystemRandom().random() < getattr(
                 settings, "SENTRY_INGEST_CONSUMER_APM_SAMPLING", 0
             )
             with sentry_sdk.start_transaction(**span_kwargs):
