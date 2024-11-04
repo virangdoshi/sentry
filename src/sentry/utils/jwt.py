@@ -41,7 +41,7 @@ def peek_claims(token: str) -> JSONData:
 
     :param token: The JWT token to extract the payload from.
     """
-    return pyjwt.decode(token, options={"verify_signature": False})
+    return pyjwt.decode(token, options={"verify_signature": True})
 
 
 def decode(
