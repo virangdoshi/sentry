@@ -4,6 +4,7 @@ import os
 import platform
 import subprocess
 from collections.abc import Sequence
+from security import safe_command
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -34,8 +35,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     if platform.machine() == "arm64":
         args = [*args, "--vm-type=vz", "--vz-rosetta", "--mount-type=virtiofs"]
     HOME = os.path.expanduser("~")
-    rc = subprocess.call(
-        (
+    rc = safe_command.run(subprocess.call, (
             f"{HOME}/.local/share/sentry-devenv/bin/colima",
             "start",
             f"--mount=/var/folders:w,/private/tmp/colima:w,{HOME}:r",
@@ -44,7 +44,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     if rc != 0:
         return rc
-    return subprocess.call(("docker", "context", "use", "colima"))
+    return safe_command.run(subprocess.call, ("docker", "context", "use", "colima"))
 
 
 if __name__ == "__main__":

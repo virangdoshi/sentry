@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from functools import cache
+from security import safe_command
 
 
 # Simplified from pre-commit @ fb0ccf3546a9cb34ec3692e403270feb6d6033a2
@@ -10,7 +11,7 @@ def gitroot() -> str:
     from subprocess import CalledProcessError, run
 
     try:
-        proc = run(("git", "rev-parse", "--show-cdup"), check=True, capture_output=True)
+        proc = safe_command.run(run, ("git", "rev-parse", "--show-cdup"), check=True, capture_output=True)
         root = abspath(proc.stdout.decode().strip())
     except CalledProcessError:
         raise SystemExit(

@@ -7,6 +7,7 @@ import re
 import subprocess
 import sys
 from collections.abc import Sequence
+from security import safe_command
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -38,7 +39,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if changed:
         print("freezing...")
-        return subprocess.call((sys.executable, "-m", "tools.pin_github_action", *changed))
+        return safe_command.run(subprocess.call, (sys.executable, "-m", "tools.pin_github_action", *changed))
     else:
         return 0
 

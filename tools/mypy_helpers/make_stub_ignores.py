@@ -6,6 +6,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from security import safe_command
 
 # Examples:
 # Cannot find implementation or library stub for module named "codeowners"
@@ -36,7 +37,7 @@ def main() -> int:
             f.write(before + stubs_begin + stubs_end + between + ignore_begin + ignore_end + rest)
 
         seen = set()
-        out = subprocess.run(("mypy", "--config", cfg, *sys.argv[1:]), capture_output=True)
+        out = safe_command.run(subprocess.run, ("mypy", "--config", cfg, *sys.argv[1:]), capture_output=True)
         for line in out.stdout.decode().splitlines():
             match = PAT.search(line)
             if match is not None and match[1] not in seen:

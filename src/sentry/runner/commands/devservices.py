@@ -15,6 +15,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import TYPE_CHECKING, Any, ContextManager, Literal, NamedTuple, overload
 
 import click
+from security import safe_command
 
 if TYPE_CHECKING:
     import docker
@@ -665,8 +666,7 @@ def run_with_retries(
 
 
 def check_postgres(options: dict[str, Any]) -> None:
-    subprocess.run(
-        (
+    safe_command.run(subprocess.run, (
             "docker",
             "exec",
             options["name"],
@@ -681,8 +681,7 @@ def check_postgres(options: dict[str, Any]) -> None:
 
 
 def check_rabbitmq(options: dict[str, Any]) -> None:
-    subprocess.run(
-        (
+    safe_command.run(subprocess.run, (
             "docker",
             "exec",
             options["name"],
@@ -697,8 +696,7 @@ def check_rabbitmq(options: dict[str, Any]) -> None:
 
 
 def check_redis(options: dict[str, Any]) -> None:
-    subprocess.run(
-        (
+    safe_command.run(subprocess.run, (
             "docker",
             "exec",
             options["name"],
@@ -721,8 +719,7 @@ def check_vroom(options: dict[str, Any]) -> None:
 
 def check_clickhouse(options: dict[str, Any]) -> None:
     port = options["ports"]["8123/tcp"]
-    subprocess.run(
-        (
+    safe_command.run(subprocess.run, (
             "docker",
             "exec",
             options["name"],
@@ -739,8 +736,7 @@ def check_clickhouse(options: dict[str, Any]) -> None:
 
 def check_kafka(options: dict[str, Any]) -> None:
     (port,) = options["ports"].values()
-    subprocess.run(
-        (
+    safe_command.run(subprocess.run, (
             "docker",
             "exec",
             options["name"],
@@ -758,8 +754,7 @@ def check_kafka(options: dict[str, Any]) -> None:
 
 def check_symbolicator(options: dict[str, Any]) -> None:
     (port,) = options["ports"].values()
-    subprocess.run(
-        (
+    safe_command.run(subprocess.run, (
             "docker",
             "exec",
             options["name"],
@@ -789,8 +784,7 @@ def check_chartcuterie(options: dict[str, Any]) -> None:
     internal_port = 9090
     port = options["ports"][f"{internal_port}/tcp"]
     url = f"http://{port[0]}:{internal_port}/api/chartcuterie/healthcheck/live"
-    subprocess.run(
-        (
+    safe_command.run(subprocess.run, (
             "docker",
             "exec",
             options["name"],
@@ -808,8 +802,7 @@ def check_snuba(options: dict[str, Any]) -> None:
     from django.conf import settings
 
     url = f"{settings.SENTRY_SNUBA}/health_envoy"
-    subprocess.run(
-        (
+    safe_command.run(subprocess.run, (
             "docker",
             "exec",
             options["name"],

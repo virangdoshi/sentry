@@ -8,13 +8,14 @@ from os.path import abspath
 from subprocess import CalledProcessError, run
 
 from tools.lib import gitroot
+from security import safe_command
 
 
 def worker(args: tuple[str, ...]) -> None:
     env = os.environ.copy()
     env["CUSTOM_COMPILE_COMMAND"] = "make freeze-requirements"
 
-    run(args, check=True, capture_output=True, env=env)
+    safe_command.run(run, args, check=True, capture_output=True, env=env)
 
 
 def check_futures(futures: list[Future[None]]) -> int:

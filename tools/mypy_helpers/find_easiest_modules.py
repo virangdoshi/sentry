@@ -3,11 +3,11 @@ from __future__ import annotations
 import collections
 import subprocess
 import sys
+from security import safe_command
 
 
 def main() -> int:
-    out = subprocess.run(
-        (sys.executable, "-m", "tools.mypy_helpers.mypy_without_ignores", *sys.argv[1:]),
+    out = safe_command.run(subprocess.run, (sys.executable, "-m", "tools.mypy_helpers.mypy_without_ignores", *sys.argv[1:]),
         capture_output=True,
     )
     counts: collections.Counter[str] = collections.Counter()
